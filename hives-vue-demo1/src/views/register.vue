@@ -11,6 +11,7 @@
               v-model="form.email"
               clearable
               placeholder="请输入注册邮箱"
+              
             ></el-input>
           </el-form-item>
           <el-form-item prop="nickname" v-show="this.next">
@@ -21,7 +22,7 @@
             ></el-input>
           </el-form-item>
 
-          <el-form-item prop="nickname" v-show="!this.next">
+          <el-form-item prop="code" v-show="!this.next">
             <el-input
               v-model="form.code"
               clearable
@@ -33,7 +34,7 @@
             <el-input
               v-model="form.password"
               clearable
-              placeholder="请输入密码密码"
+              placeholder="请输入密码"
               show-password
             ></el-input>
           </el-form-item>
@@ -42,7 +43,7 @@
             <el-input
               v-model="form.determine"
               clearable
-              placeholder="请再次输入密码"
+              placeholder="请确定密码"
               show-password
             ></el-input>
           </el-form-item>
@@ -52,7 +53,7 @@
         <el-button type="primary" @click="login()"
           >返回登录</el-button
         >
-        <el-button class="shou" @click="validate">发送验证码</el-button>
+        <el-button class="shou" @click="sendCode">发送验证码</el-button>
       </div>
     </div>
   </div>
@@ -98,7 +99,7 @@ export default {
     },
     forgetpas() {
     },
-    validate(){
+    sendCode(){
         let params = {
               "email": this.form.email
         }
@@ -106,6 +107,9 @@ export default {
             this.next=!this.next
               alert("已发送验证码!")
           })
+    },
+    validate(){
+
     },
     register() {
     },
