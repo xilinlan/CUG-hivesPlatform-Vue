@@ -5,9 +5,9 @@ import App from './App.vue'
 import router from './router'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-
-import './assets/main.css'
 import axios from 'axios'
+import './assets/global.css'
+import './assets/LoginAndRegister.css'
 
 const app = createApp(App)
 axios.defaults.baseURL = 'http://localhost:88/'
