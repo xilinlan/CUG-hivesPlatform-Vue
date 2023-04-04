@@ -1,10 +1,5 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-    <h1>Check my project</h1>
-    <h1>Check my project</h1>
-    <h1>Check my project</h1>
-  </div>
+  <el-button type="primary" @click="submit">Primary</el-button>
 </template>
 
 <style>
@@ -16,3 +11,21 @@
   }
 }
 </style>
+
+<script>
+export default {
+  name: "login",
+  data() {
+  },
+  created() {},
+  methods: {
+    submit() {
+     this.$http.get( '/api/exchange/post/test', {
+        params: {}
+      } ).then(res=>{
+        console.log(res)
+      })
+    }    
+  }
+};
+</script>
