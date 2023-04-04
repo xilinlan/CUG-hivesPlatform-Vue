@@ -8,8 +8,12 @@ import 'element-plus/dist/index.css'
 import axios from 'axios'
 import './assets/global.css'
 import './assets/LoginAndRegister.css'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 const app = createApp(App)
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+}
 axios.defaults.baseURL = 'http://localhost:88/'
 
 app.config.globalProperties.$http=axios
