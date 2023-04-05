@@ -9,6 +9,8 @@ import axios from 'axios'
 import './assets/global.css'
 import './assets/LoginAndRegister.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import 'virtual:svg-icons-register';
+import svgIcon from './components/svgIcon.vue';
 
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
@@ -21,4 +23,5 @@ app.config.globalProperties.$http=axios
 app.use(createPinia())
 app.use(router)
 app.use(ElementPlus)
+app.component('svg-icon', svgIcon)
 app.mount('#app')

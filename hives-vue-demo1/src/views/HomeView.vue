@@ -1,48 +1,38 @@
 <script setup>
 import { ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-const input1 = ref('')
-const tableData = [
-    {
-      place:'Trending in Philippines',
-      trendsname:'#LADJOAWDQWELADNASSD',
-      num:'23,23M Hives'
-    },
-  {
-    place:'Trending in Philippines',
-    trendsname:'#LADJOAWDQWELADNASSD',
-    num:'23,23M Hives'
-  },
-  {
-    place:'Trending in Philippines',
-    trendsname:'#LADJOAWDQWELADNASSD',
-    num:'23,23M Hives'
-  },
-  {
-    place:'Trending in Philippines',
-    trendsname:'#LADJOAWDQWELADNASSD',
-    num:'23,23M Hives'
-  },
-  {
-    place:'Trending in Philippines',
-    trendsname:'#LADJOAWDQWELADNASSD',
-    num:'23,23M Hives'
-  },
-  {
-    place:'Trending in Philippines',
-    trendsname:'#LADJOAWDQWELADNASSD',
-    num:'23,23M Hives'
-  },
-  {
-    place:'Trending in Philippines',
-    trendsname:'#LADJOAWDQWELADNASSD',
-    num:'23,23M Hives'
-  }
-]
-const activeIndex = ref('1')
+
+
+const activeIndex = ref('/foryou')
+
+
 </script>
 
 <template>
+  <el-dialog
+      v-model="dialogVisible"
+      title="Tips"
+      width="37%"
+  >
+    <el-input v-model="content_input" placeholder="Please input" :type="'textarea'" :rows="10"/>
+    <div style="margin-top: 10px;margin-left: 10px">
+      <el-upload
+          v-model:file-list="fileList"
+          accept="#"
+          :auto-upload='false'
+          list-type="picture-card"
+          :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove"
+      >
+        <el-icon><Plus /></el-icon>
+      </el-upload>
+
+      <el-dialog v-model="dialogVisible_upload">
+        <img w-full :src="dialogImageUrl" alt="Preview Image" />
+      </el-dialog>
+    </div>
+    <el-button round class="Hive-button">Hive</el-button>
+  </el-dialog>
   <el-row :gutter="0">
     <el-col :span="20"><div class="grid-content ep-bg-purple">
       <el-container class="layout-container-demo" >
@@ -73,8 +63,8 @@ const activeIndex = ref('1')
                   mode="horizontal"
                   @select="MeanClick"
               >
-                <el-menu-item index="foryou">For you</el-menu-item>
-                <el-menu-item index="following">Following</el-menu-item>
+                <el-menu-item index="/foryou">For you</el-menu-item>
+                <el-menu-item index="/following">Following</el-menu-item>
               </el-menu>
             </div>
           </el-header>
@@ -89,15 +79,6 @@ const activeIndex = ref('1')
       <el-aside width="350px" style="text-align: center">
         <el-scrollbar>
           <div class="demo-input-size" style="width: 250px;margin-left: 50px">
-<!--            <el-input-->
-<!--                v-model="input1"-->
-<!--                class="w-50 m-2"-->
-<!--                size="large"-->
-<!--                rows="1"-->
-<!--                style="border-top-left-radius: 50px"-->
-<!--                placeholder="Search Hives"-->
-<!--                :prefix-icon="Search"-->
-<!--            />-->
             <input class="explore-input" type="text" placeholder="    Search Hives" :prefix="Search" />
             </div>
           <div>
@@ -121,11 +102,77 @@ const activeIndex = ref('1')
 
 <script>
 
+import {ref} from "vue";
+
 export default {
-  methods: {
-    MeanClick(index){
-      this.$router.push(index);
+  mounted() {
+    this.MeanClick('/foryou')
+  },
+  data(){
+    return{
+      content_input:'',
+      dialogVisible : false,
+      dialogVisible_upload:false,
+      dialogImageUrl:'',
+      tableData : [
+        {
+          place:'Trending in Philippines',
+          trendsname:'#LADJOAWDQWELADNASSD',
+          num:'23,23M Hives'
+        },
+        {
+          place:'Trending in Philippines',
+          trendsname:'#LADJOAWDQWELADNASSD',
+          num:'23,23M Hives'
+        },
+        {
+          place:'Trending in Philippines',
+          trendsname:'#LADJOAWDQWELADNASSD',
+          num:'23,23M Hives'
+        },
+        {
+          place:'Trending in Philippines',
+          trendsname:'#LADJOAWDQWELADNASSD',
+          num:'23,23M Hives'
+        },
+        {
+          place:'Trending in Philippines',
+          trendsname:'#LADJOAWDQWELADNASSD',
+          num:'23,23M Hives'
+        },
+        {
+          place:'Trending in Philippines',
+          trendsname:'#LADJOAWDQWELADNASSD',
+          num:'23,23M Hives'
+        },
+        {
+          place:'Trending in Philippines',
+          trendsname:'#LADJOAWDQWELADNASSD',
+          num:'23,23M Hives'
+        }
+      ],
+      fileList:[],
     }
+  },
+  methods: {
+    testget(){
+      console.log("file", this.fileList);
+    },
+    MeanClick(index){
+      if(index!=="9"){
+        this.$router.push(index);
+      }
+      else{
+        this.dialogVisible=true;
+      }
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
   }
 }
 </script>
@@ -133,13 +180,13 @@ export default {
 .main-menu-item:hover{
   border-left:none !important;
   background-color:white;
-  color: #fdc107 !important;
+  color: #FFD103 !important;
   font-size: 25px;
 }
 .main-menu-item.is-active{
   border-left:none !important;
   background-color: rgba(166, 163, 163, 0.99);
-  color: #fdc107 !important;
+  color: #FFD103 !important;
   font-size: 20px;
 }
 .el-menu-home{
@@ -170,6 +217,15 @@ export default {
   height: 30px;
   border-radius: 20px;
   font-size: 15px;
+}
+.Hive-button{
+  margin-top: 20px;
+  margin-left: 460px;
+  font-weight: bolder;
+  font-size: 20px;
+  background: #FFD103;
+  width: 180px;
+  height: 60px;
 }
 </style>
 
