@@ -31,7 +31,7 @@ const activeIndex = ref('/foryou')
         <img w-full :src="dialogImageUrl" alt="Preview Image" />
       </el-dialog>
     </div>
-    <el-button round class="Hive-button">Hive</el-button>
+    <el-button round class="Hive-button" @click="HiveButtonClick">Hive</el-button>
   </el-dialog>
   <el-row :gutter="0">
     <el-col :span="20"><div class="grid-content ep-bg-purple">
@@ -108,6 +108,7 @@ export default {
   mounted() {
     this.MeanClick('/foryou')
   },
+  inject:['reload'],
   data(){
     return{
       content_input:'',
@@ -172,6 +173,10 @@ export default {
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
+    },
+    HiveButtonClick(){
+      this.dialogVisible=false;
+      this.reload()
     },
   }
 }
