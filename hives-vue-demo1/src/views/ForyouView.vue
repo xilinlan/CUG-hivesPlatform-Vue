@@ -72,7 +72,7 @@ import SvgIcon from "@/components/SvgIcon.vue";
                   <SvgIcon name="love-g" className="Tips-tag" v-if="!scope.row.isLove" @click="LoveClick(scope.$index)"/>
                   <SvgIcon name="love-p" className="Tips-tag" v-if="scope.row.isLove" @click="LoveCancel(scope.$index)"/>
                   <a class="tips_num">{{scope.row.love}}</a>
-                  <SvgIcon name="comment-g" className="Tips-tag" @click="commentDialogVisible=true"/>
+                  <SvgIcon name="comment-g" className="Tips-tag" @click="showCommentDialog(scope.row.id)"/>
                   <a class="tips_num">{{scope.row.comment_tips}}</a>
                   <SvgIcon name="collection-g" className="Tips-tag" v-if="!scope.row.isCollect" @click="CollectClick(scope.$index)"/>
                   <SvgIcon name="collection-y" className="Tips-tag" v-if="scope.row.isCollect" @click="ClickCancel(scope.$index)"/>
@@ -113,7 +113,7 @@ import SvgIcon from "@/components/SvgIcon.vue";
       </el-form-item>
       <el-divider />
       <div class="tips-comment">
-        <div class="each-comment" v-for="item in commentData">
+        <div class="each-comment" v-for="(item,index) in commentData" :key="index">
           <el-row>
             <el-col :span="2">
               <el-avatar :src="item.user_image"></el-avatar>
@@ -124,6 +124,8 @@ import SvgIcon from "@/components/SvgIcon.vue";
               <p style="font-weight: lighter;color: #181818;font-size: 15px">{{item.content}}</p>
               <el-icon><Comment /></el-icon>
               <a class="Comment-reply-num">{{item.reply_num}}</a>
+              <SvgIcon name="reply" style="width: 16px; height: 16px; margin-left: 30px;margin-bottom:1px" @click="replyToComment(index,item)"></SvgIcon>
+              <a class="Comment-reply-num" style="color: #4682B4" @click="replyToComment(index,item)">回复</a>
               <el-collapse>
                 <el-collapse-item v-if="item.reply_num!==0">
                   <div class="each-reply" v-for="replyItem in item.reply_data">
@@ -136,6 +138,9 @@ import SvgIcon from "@/components/SvgIcon.vue";
                         <p style="font-size: 10px;color: #696969;font-weight: lighter">{{replyItem.create_time }}</p>
                         <a style="font-weight: lighter;color:#4682B4;font-size: 15px">回复{{replyItem.target_nickname}}: </a>
                         <a style="font-weight: lighter;color: #181818;font-size: 15px">{{replyItem.content}}</a>
+                        <div/>
+                        <SvgIcon name="reply" style="width: 16px; height: 16px;margin-bottom:1px" @click="replyToComment(index,replyItem)"></SvgIcon>
+                        <a class="Comment-reply-num" style="color: #4682B4" @click="replyToComment(index,replyItem)">回复</a>
                       </el-col>
                       <el-divider/>
                     </el-row>
@@ -149,9 +154,30 @@ import SvgIcon from "@/components/SvgIcon.vue";
       </div>
     </div>
   </el-dialog>
+
+<!--  回复输入窗口-->
+  <el-drawer
+      v-model="replyDrawer"
+      title="Reply"
+      :direction="'btt'"
+  >
+
+    <el-form-item :inline="true">
+      <el-input
+          class="reply-input"
+          v-model="reply_input"
+          placeholder="Please input your reply"
+          style="width:1000px;margin-left: 300px;"
+      >
+      </el-input>
+      <el-button round style="background: #FFD103;font-weight: bolder;border-radius: 95px" @click="replyButtonClick">Reply</el-button>
+    </el-form-item>
+
+  </el-drawer>
 </template>
 
 <script>
+
 export default {
   name: "ForyouView",
   data(){
@@ -168,6 +194,7 @@ export default {
       fileList:[],
       tableData : [
         {
+          id:1,
           user_image:'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
           user_email:'#Retuers@XXXXX.com',
           nickname:"Retuers",
@@ -187,6 +214,7 @@ export default {
           isLove:false
         },
         {
+          id:2,
           user_image:'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
           user_email:'#Retuers@XXXXX.com',
           nickname:"Retuers",
@@ -201,6 +229,7 @@ export default {
           isLove:false
         },
         {
+          id:3,
           user_image:'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
           user_email:'#Retuers@XXXXX.com',
           nickname:"Retuers",
@@ -215,6 +244,11 @@ export default {
           isLove:false
         },
       ],
+      currentCommentID:0,
+      currentCommentIndex:0,
+      tempItem:{},
+      replyDrawer:false,
+      reply_input:'',
       commentData :[
         {
           id:1,
@@ -253,7 +287,7 @@ export default {
               target_nickname:'Retuers',
               user_image:'https://img.wxcha.com/m00/39/43/e6ae8ffa55fb94cb153dc68478f34487.jpg',
             }
-          ]
+          ],
         },
         {
           id:1,
@@ -793,6 +827,51 @@ export default {
     PictureClick(){
       this.dialogVisible=true;
     },
+    showCommentDialog(id){
+      this.currentCommentID=id;
+      console.log("comment_id",this.currentCommentID)
+      //调用后端接口获取数据
+      this.commentDialogVisible=true
+    },
+    getMoment(){
+      var date=new Date();
+      var year=date.getFullYear();
+      /* 在日期格式中，月份是从0开始的，因此要加0
+       * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+       * */
+      var month= date.getMonth()+1<10 ? "0"+(date.getMonth()+1) : date.getMonth()+1;
+      var day=date.getDate()<10 ? "0"+date.getDate() : date.getDate();
+      var hours=date.getHours()<10 ? "0"+date.getHours() : date.getHours();
+      var minutes=date.getMinutes()<10 ? "0"+date.getMinutes() : date.getMinutes();
+      // 拼接
+      return year+"年"+month+"月"+day+"日 "+hours+":"+minutes;
+    },
+    replyToComment(index,item){
+      this.replyDrawer=true
+      this.currentCommentIndex=index
+      this.tempItem=item
+      console.log(index)
+    },
+    replyButtonClick(){
+      var index = this.currentCommentIndex
+      var item = {
+        id:1,
+        post_id:2,
+        reply_id:1,
+        content:this.reply_input,
+        create_time:this.getMoment(),
+        user_id:12312,
+        target_id:this.tempItem.user_id,
+        user_nickname:'testName',
+        target_nickname:this.tempItem.user_nickname,
+        user_image:this.user_imageURL,
+      }
+      console.log(this.commentData[this.currentCommentIndex])
+      this.commentData[index].reply_data.push(item)
+      this.commentData[index].reply_num=this.commentData[index].reply_num+1
+      this.replyDrawer=false
+      this.reply_input=''
+    }
   },
 
 }
@@ -843,6 +922,11 @@ export default {
   height: 60px;
 }
 .comment-input{
+  width: 300px;
+  margin-right: 15px;
+  border-radius: 95px;
+}
+.reply-input{
   width: 300px;
   margin-right: 15px;
   border-radius: 95px;
