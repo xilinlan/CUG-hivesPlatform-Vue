@@ -34,7 +34,7 @@
         </div>
       </div>
       <div class="butt">
-        <el-button type="primary" @click="login()"
+        <el-button type="primary" @click="logintest()"
           >登录</el-button
         >
         <el-button class="shou" @click="register">注册</el-button>
@@ -68,6 +68,9 @@ export default {
   mounted() {
   },
   methods: {
+    logintest(){
+      this.$router.push('/home')
+    },
     login() {
         console.log(this.form.password)
         console.log(this.form.email)
