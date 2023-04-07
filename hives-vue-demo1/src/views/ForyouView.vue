@@ -414,7 +414,18 @@ export default {
       this.reply_input=''
     },
     commentInputButton(){
-
+      var item = {
+        id:1,
+        post_id:2,
+        reply_id:1,
+        content:this.comment_input,
+        create_time:this.getMoment(),
+        user_id:12312,
+        target_id:this.tempItem.user_id,
+        user_nickname:'testName',
+        target_nickname:this.tempItem.user_nickname,
+        user_image:this.user_imageURL,
+      }
     }
   },
 
