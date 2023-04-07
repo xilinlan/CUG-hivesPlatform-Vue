@@ -34,9 +34,9 @@ const activeIndex = ref('/foryou')
     <el-button round class="Hive-button" @click="HiveButtonClick">Hive</el-button>
   </el-dialog>
   <el-row :gutter="0">
-    <el-col :span="20"><div class="grid-content ep-bg-purple">
+    <el-col :span="19"><div class="grid-content ep-bg-purple">
       <el-container class="layout-container-demo" >
-        <el-aside width="600px">
+        <el-aside width="30%">
           <el-scrollbar>
             <el-menu @select="MeanClick" class="el-menu-home">
               <el-menu-item class="main-menu-item" index="/home"><el-icon><Monitor /></el-icon>Home</el-menu-item>
@@ -75,11 +75,15 @@ const activeIndex = ref('/foryou')
       </el-container>
     </div>
     </el-col>
-    <el-col :span="4"><div class="grid-content ep-bg-purple" id="search_div">
-      <el-aside width="350px" style="text-align: center">
+    <el-col :span="5"><div class="grid-content ep-bg-purple" id="search_div">
+      <el-aside width="100%" style="text-align: center">
         <el-scrollbar>
-          <div class="demo-input-size" style="width: 250px;margin-left: 50px">
-            <input class="explore-input" type="text" placeholder="    Search Hives" :prefix="Search" />
+          <div>
+            <el-input
+                class="explore-input"
+                v-model="searchInput"
+                placeholder="Search Hives"
+            />
             </div>
           <div>
             <el-table :data="tableData" style="width: 100%;margin-top: 10px" class="table_trends">
@@ -115,6 +119,7 @@ export default {
       dialogVisible : false,
       dialogVisible_upload:false,
       dialogImageUrl:'',
+      searchInput:'',
       tableData : [
         {
           place:'Trending in Philippines',
@@ -195,7 +200,7 @@ export default {
   font-size: 20px;
 }
 .el-menu-home{
-  margin-left: 350px;
+  margin-left: 20px;
 }
 .el-row {
   margin-bottom: 20px;
@@ -231,6 +236,16 @@ export default {
   background: #FFD103;
   width: 180px;
   height: 60px;
+}
+.explore-input{
+  width: 80%;
+  margin-right: 20%;
+  border-radius: 95px;
+}
+:deep(.el-input__wrapper) {
+  border-radius: 95px;
+  border: 0;
+  box-shadow: 0 0 0 0px;
 }
 </style>
 
