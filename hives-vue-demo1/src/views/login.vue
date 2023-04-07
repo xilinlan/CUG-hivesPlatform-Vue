@@ -76,6 +76,7 @@ export default {
         console.log(this.form.email)
         this.$http.post('/api/user/user/login',this.form).then(res=>{
             console.log(res)
+            window.sessionStorage.setItem('user',res.data.user)
         })
     },
     remenber(data){    

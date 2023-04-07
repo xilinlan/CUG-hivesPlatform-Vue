@@ -53,8 +53,10 @@
         <el-button type="primary" @click="login()"
           >返回登录</el-button
         >
-        <el-button class="shou" @click="sendCode">发送验证码</el-button>
-      </div>
+        <el-button class="shou" @click="sendCode" v-show="!this.is_sendCode&&!this.next">发送验证码</el-button>
+        <el-button class="shou" @click="validate" v-show="this.is_sendCode&&!this.next">确定</el-button>
+        <el-button class="shou" @click="register" v-show="this.next">注册</el-button>
+     </div>
     </div>
   </div>
 </template>
@@ -86,7 +88,8 @@ export default {
            { max: 20, message: "不能大于20个字符", trigger: "blur" },
         ]
       },
-      next: false
+      next: false,
+      is_sendCode:false,
     };
   },
   mounted() {
@@ -100,18 +103,31 @@ export default {
     forgetpas() {
     },
     sendCode(){
-        let params = {
-              "email": this.form.email
+      let params = {
+          "email": this.form.email
+      }
+      this.$http.get("/api/user/user/sendCode", {params}).then(res=>{
+        console.log(res)
+        alert(res.data.msg)
+        if(res.data.code==1){
+          this.is_sendCode=true
         }
-        this.$http.get("/api/user/user/sendCode", {params}).then(res=>{
-            this.next=!this.next
-              alert("已发送验证码!")
-          })
+      })
     },
     validate(){
-
+      let params = {
+        "email":this.form.email,
+        "code":this.form.code
+      }
+      alert("发送验证码")
+      this.$http.get("/api/user/user/validate",{params}).then(res=>{
+        console.log(res)
+        alert(res.data)
+        this.next=!this.next
+      })
     },
     register() {
+      
     },
   },
 };

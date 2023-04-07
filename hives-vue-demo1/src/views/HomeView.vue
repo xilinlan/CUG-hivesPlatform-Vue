@@ -36,7 +36,7 @@ const activeIndex = ref('/foryou')
   <el-row :gutter="0">
     <el-col :span="20"><div class="grid-content ep-bg-purple">
       <el-container class="layout-container-demo" >
-        <el-aside width="600px">
+        <el-aside width="30%">
           <el-scrollbar>
             <el-menu @select="MeanClick" class="el-menu-home">
               <el-menu-item class="main-menu-item" index="/home"><el-icon><Monitor /></el-icon>Home</el-menu-item>
@@ -195,7 +195,7 @@ export default {
   font-size: 20px;
 }
 .el-menu-home{
-  margin-left: 350px;
+  margin-left: 30px;
 }
 .el-row {
   margin-bottom: 20px;
