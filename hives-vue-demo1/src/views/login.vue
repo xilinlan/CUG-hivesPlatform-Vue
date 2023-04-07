@@ -55,12 +55,11 @@ export default {
       },
       checked: false,
       rules: {
-        username: [
+        email: [
           { required: true, message: "请输入邮箱名", trigger: "blur" },
         ],
         password: [
           { required: true, message: "请输入密码", trigger: "blur" },
-          { max: 20, message: "不能大于20个字符", trigger: "blur" },
         ],
       },
     };
@@ -76,9 +75,16 @@ export default {
     login() {
         console.log(this.form.password)
         console.log(this.form.email)
+        if(this.form.email===''||this.form.password==='')
+        {
+          return this.$message({
+            message: '请输入邮箱或密码',
+            type: 'error'
+          })
+        }
         this.$http.post('/api/user/user/login',this.form).then(res=>{
             console.log(res)
-            if(res.data.code === 200){
+            if(res.data.loginStatus === 1){
                 this.$message({
                     message: '登录成功',
                     type: 'success'
