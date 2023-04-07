@@ -34,7 +34,7 @@
         </div>
       </div>
       <div class="butt">
-        <el-button type="primary" @click="logintest()"
+        <el-button type="primary" @click="login()"
           >登录</el-button
         >
         <el-button class="shou" @click="register">注册</el-button>
@@ -69,16 +69,30 @@ export default {
   },
   methods: {
     logintest(){
+
       this.$router.push('/home')
+
     },
     login() {
         console.log(this.form.password)
         console.log(this.form.email)
         this.$http.post('/api/user/user/login',this.form).then(res=>{
             console.log(res)
-        })
+            if(res.data.code === 200){
+                this.$message({
+                    message: '登录成功',
+                    type: 'success'
+                })
+                this.$router.push('/home')
+            }else{
+                this.$message({
+                    message: '登录失败',
+                    type: 'error'
+                })
+            }
+      })
     },
-    remenber(data){    
+    remenber(data){
     },
     forgetpas() {
     },
