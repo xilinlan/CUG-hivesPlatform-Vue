@@ -67,14 +67,7 @@ export default {
   mounted() {
   },
   methods: {
-    logintest(){
-
-      this.$router.push('/home')
-
-    },
     login() {
-        console.log(this.form.password)
-        console.log(this.form.email)
         if(this.form.email===''||this.form.password==='')
         {
           return this.$message({
