@@ -303,9 +303,6 @@ export default {
     }
   },
   methods: {
-    testget(){
-      console.log("file", this.fileList);
-    },
     MeanClick(index){
       if(index!=="9"){
         this.$router.push(index);
@@ -324,22 +321,32 @@ export default {
     HiveButtonClick(){
       this.dialogVisible=false;
       this.reload()
+      //toDo
+      //发布新的hive
     },
     LoveClick(index){
       this.HivesData[index].isLove=true
       this.HivesData[index].love=this.HivesData[index].love+1
+      //toDo
+      //点赞
     },
     LoveCancel(index){
       this.HivesData[index].isLove=false
       this.HivesData[index].love=this.HivesData[index].love-1
+      //toDo
+      //取消点赞
     },
     CollectClick(index){
       this.HivesData[index].isCollect=true
       this.HivesData[index].collection=this.HivesData[index].collection+1
+      //toDo
+      //收藏
     },
     ClickCancel(index){
       this.HivesData[index].isCollect=false
       this.HivesData[index].collection=this.HivesData[index].collection-1
+      //toDO
+      //取消收藏
     },
     showCommentDialog(id){
       this.$refs.commentDialog.showDialog(id)

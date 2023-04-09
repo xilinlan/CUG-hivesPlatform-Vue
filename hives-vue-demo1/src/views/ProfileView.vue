@@ -257,6 +257,8 @@ export default {
       this.hivesTable[this.currentHiveIndex].content=this.hiveContentInput
       this.editDialogVisible=false
     }
+    //toDo
+    //编辑hive
   }
 }
 </script>
