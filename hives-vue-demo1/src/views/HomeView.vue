@@ -13,7 +13,7 @@ const activeIndex = ref('/home')
         <el-aside width="30%">
           <el-scrollbar>
             <el-menu @select="MeanClick" class="el-menu-home">
-              <el-menu-item class="main-menu-item" index="/home"><el-icon><Monitor /></el-icon>Home</el-menu-item>
+              <el-menu-item class="main-menu-item" index="/foryou"><el-icon><Monitor /></el-icon>Home</el-menu-item>
               <el-menu-item class="main-menu-item" index="/explore"><el-icon><Search /></el-icon>Explore</el-menu-item>
               <el-menu-item class="main-menu-item" index="/notifications"><el-icon><Bell /></el-icon>Notifications</el-menu-item>
               <el-menu-item class="main-menu-item" index="4"><el-icon><Message /></el-icon>Message</el-menu-item>
@@ -185,7 +185,7 @@ const activeIndex = ref('/home')
         <img w-full :src="dialogImageUrl" alt="Preview Image" />
       </el-dialog>
     </div>
-    <el-button round class="Hive-button" @click="HiveButtonClick">Hive</el-button>
+    <el-button round class="Hive-button"  @click="HiveButtonClick">Hive</el-button>
   </el-dialog>
 
   <!--  评论对话框-->
@@ -320,9 +320,24 @@ export default {
     },
     HiveButtonClick(){
       this.dialogVisible=false;
-      this.reload()
       //toDo
       //发布新的hive
+      this.$http.post('/api/exchange/hive', {
+        user_email: this.user_email,
+        content: this.content,
+        url: this.fileList,
+        love: 0,
+        comment_tips: 0,
+        collection: 0,
+        hot: 0,
+        isCollect: false,
+        isLove: false
+      }).then(function (response) {
+        console.log(response);
+      }, function (response) {
+        console.log(response);
+      });
+      this.reload()
     },
     LoveClick(index){
       this.HivesData[index].isLove=true
@@ -398,23 +413,19 @@ export default {
 }
 .Hive-button{
   margin-top: 20px;
-  margin-left: 460px;
+  margin-left: 420px;
   font-weight: bolder;
   font-size: 20px;
   background: #FFD103;
   width: 180px;
   height: 60px;
 }
-.explore-input{
+.explore-input:deep(.el-input__wrapper){
   width: 80%;
   margin-right: 20%;
   border-radius: 95px;
 }
-:deep(.el-input__wrapper) {
-  border-radius: 95px;
-  border: 0;
-  box-shadow: 0 0 0 0px;
-}
+
 .emoji{
   width: 25px;
   height: 25px;

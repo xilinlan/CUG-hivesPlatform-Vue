@@ -31,7 +31,8 @@ import SvgIcon from "@/components/SvgIcon.vue";
   </el-dialog>
   <div>
     <el-image style="width: 70px; height: 70px;border-radius: 70px;margin-top: 40px;margin-left: 40px" :src="user_imageURL" :fit="fit"/>
-    <a style="margin-left: 15px; position: relative;bottom: 20px;font-weight: bolder;font-size: 30px">What's happening?</a>
+    <el-input style="width: 600px;height: 100px;margin-left: 20px;" placeholder="What's happening?" v-model="content_input" @click="DialogClick"/>
+<!--    <a style="margin-left: 15px; position: relative;bottom: 20px;font-weight: bolder;font-size: 30px">What's happening?</a>-->
   </div>
   <div style="margin-top: 50px;margin-left: 100px">
     <SvgIcon name="picture" className="picture" @click="PictureClick"/>
@@ -486,7 +487,7 @@ export default {
   margin-right: 15px;
   border-radius: 95px;
 }
-:deep(.el-input__wrapper) {
+.reply-input.el-input__wrapper{
   border-radius: 95px;
   border: 0;
   box-shadow: 0 0 0 0px;
