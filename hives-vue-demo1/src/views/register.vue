@@ -84,7 +84,7 @@ export default {
           { max: 20, message: "不能大于20个字符", trigger: "blur" },
         ],
         determine: [
-           { required: true, message: "请输入密码", trigger: "blur" },
+           { required: true, message: "请再次输入密码", trigger: "blur" },
            { max: 20, message: "不能大于20个字符", trigger: "blur" },
         ]
       },
@@ -106,11 +106,18 @@ export default {
       let params = {
           "email": this.form.email
       }
-      this.$http.get("/api/user/user/sendCode", {params}).then(res=>{
-        console.log(res)
-        alert(res.data.msg)
+      this.$http.get("/api/user/user/sendCode",{params}).then(res=>{
         if(res.data.code==1){
+          this.$message({
+            message:res.data.msg,
+            type:'success'
+          })
           this.is_sendCode=true
+        }else{
+          this.$message({
+            message:res.data.msg,
+            type:'error'
+          })
         }
       })
     },
@@ -119,15 +126,37 @@ export default {
         "email":this.form.email,
         "code":this.form.code
       }
-      alert("发送验证码")
-      this.$http.get("/api/user/user/validate",{params}).then(res=>{
+      this.$http.get("/api/user/user/validate?",{params}).then(res=>{
         console.log(res)
-        alert(res.data)
-        this.next=!this.next
+        if(res.data.code==1){
+          this.$message({
+            message:res.data.msg,
+            type:'success'
+          })
+          this.next=!this.next
+        }else{
+          this.$message({
+            message:res.data.msg,
+            type:'error'
+          })
+        }
       })
     },
     register() {
-      
+      this.$http.post("/api/user/user/register",this.form).then(res=>{
+        if(res.data.code==1){
+          this.$message({
+            message:res.data.msg,
+            type:'success'
+          })
+          this.$router.push("/")
+        }else{
+          this.$message({
+            message:res.data.msg,
+            type:'error'
+          })
+        }
+      })
     },
   },
 };
