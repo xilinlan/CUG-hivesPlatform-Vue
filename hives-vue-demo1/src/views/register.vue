@@ -107,7 +107,7 @@ export default {
           "email": this.form.email
       }
       this.$http.get("/api/user/user/sendCode",{params}).then(res=>{
-        if(res.data.code==1){
+        if(res.data.code===1){
           this.$message({
             message:res.data.msg,
             type:'success'
@@ -128,7 +128,7 @@ export default {
       }
       this.$http.get("/api/user/user/validate?",{params}).then(res=>{
         console.log(res)
-        if(res.data.code==1){
+        if(res.data.code===1){
           this.$message({
             message:res.data.msg,
             type:'success'
@@ -144,7 +144,7 @@ export default {
     },
     register() {
       this.$http.post("/api/user/user/register",this.form).then(res=>{
-        if(res.data.code==1){
+        if(res.data.regStatus===1){
           this.$message({
             message:res.data.msg,
             type:'success'
