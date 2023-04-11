@@ -11,6 +11,7 @@ import './assets/LoginAndRegister.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'virtual:svg-icons-register';
 import svgIcon from './components/svgIcon.vue';
+import CommentDialog from "./components/CommentDialog.vue";
 
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
