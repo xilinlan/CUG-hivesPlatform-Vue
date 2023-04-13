@@ -82,6 +82,7 @@ export default {
                     message: '登录成功',
                     type: 'success'
                 })
+              window.sessionStorage.setItem('user',res.data.user)
                 this.$router.push('/home')
             }else{
                 this.$message({

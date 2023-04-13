@@ -13,7 +13,7 @@ const activeIndex = ref('/home')
         <el-aside width="30%">
           <el-scrollbar>
             <el-menu @select="MeanClick" class="el-menu-home">
-              <el-menu-item class="main-menu-item" index="/foryou"><el-icon><Monitor /></el-icon>Home</el-menu-item>
+              <el-menu-item class="main-menu-item" index="/home"><el-icon><Monitor /></el-icon>Home</el-menu-item>
               <el-menu-item class="main-menu-item" index="/explore"><el-icon><Search /></el-icon>Explore</el-menu-item>
               <el-menu-item class="main-menu-item" index="/notifications"><el-icon><Bell /></el-icon>Notifications</el-menu-item>
               <el-menu-item class="main-menu-item" index="4"><el-icon><Message /></el-icon>Message</el-menu-item>
