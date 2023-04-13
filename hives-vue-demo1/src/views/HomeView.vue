@@ -54,13 +54,18 @@ const activeIndex = ref('/home')
                   <el-avatar :src="userImageUrl" :size="'large'"/>
                   <el-input
                       class="comment-input"
-                      v-model="commentInput"
+                      v-model="contentInput2"
                       placeholder="What's happening?"
                       :type="'textarea'"
                       :rows="5"
                       style="width:90%;margin-left: 10px;margin-top: 2%"
                   >
                   </el-input>
+<!--                  图片上传-->
+                  <div class="hives-picture-box"  style="margin-left: 10%;margin-top: 1%" v-if="dialogVisibleForYouUpload">
+                    <HivesPublish ref="hiveForYouPublish"/>
+                  </div>
+<!--                  图标-->
                 </el-form-item>
                 <el-form-item :inline="true" style="margin-left: 5%">
                   <SvgIcon name="picture" className="picture" @click="PictureClick"/>
@@ -74,6 +79,7 @@ const activeIndex = ref('/home')
                     font-size: 20px;
                     width: 150px;
                     background: #FFD103;"
+                   @click="HiveButtonClick2"
                   >Hive</el-button>
                 </el-form-item>
                 <el-divider/>
@@ -168,22 +174,9 @@ const activeIndex = ref('/home')
       title="Tips"
       width="37%"
   >
-    <el-input v-model="content_input" placeholder="Please input" :type="'textarea'" :rows="10"/>
+    <el-input v-model="contentInput" placeholder="Please input" :type="'textarea'" :rows="10"/>
     <div style="margin-top: 10px;margin-left: 10px">
-      <el-upload
-          v-model:file-list="fileList"
-          accept="#"
-          :auto-upload='false'
-          list-type="picture-card"
-          :on-preview="handlePictureCardPreview"
-          :on-remove="handleRemove"
-      >
-        <el-icon><Plus /></el-icon>
-      </el-upload>
-
-      <el-dialog v-model="dialogVisible_upload">
-        <img w-full :src="dialogImageUrl" alt="Preview Image" />
-      </el-dialog>
+      <HivesPublish ref="hivesMenuPublish"/>
     </div>
     <el-button round class="Hive-button" @click="HiveButtonClick">Hive</el-button>
   </el-dialog>
@@ -196,20 +189,28 @@ const activeIndex = ref('/home')
 
 import {ref} from "vue";
 import CommentDialog from "../components/CommentDialog.vue";
+import HivesPublish from "../components/HivesPublish.vue";
 
 export default {
+  mounted() {
+    this.user = JSON.parse(window.sessionStorage.getItem('user'))
+    this.userImageUrl = this.user.header
+  },
   inject:['reload'],
   components:{
-    CommentDialog
+    CommentDialog,
+    HivesPublish
   },
   data(){
     return{
-      userImageUrl:'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-      content_input:'',
+      user:{},
+      userImageUrl:'',
+      contentInput:'',
+      contentInput2:'',
       dialogVisible : false,
-      dialogVisible_upload:false,
-      dialogImageUrl:'',
       searchInput:'',
+      hivesUpload:false,
+      dialogVisibleForYouUpload:false,
       tableData : [
         {
           place:'Trending in Philippines',
@@ -247,7 +248,6 @@ export default {
           num:'23,23M Hives'
         }
       ],
-      fileList:[],
       HivesData : [
         {
           id:1,
@@ -311,15 +311,52 @@ export default {
         this.dialogVisible=true;
       }
     },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
-    },
     HiveButtonClick(){
-      this.dialogVisible=false;
+      let pictureUplod = this.$refs.hivesMenuPublish
+      //用户上传的图片
+      let urlList = []
+      for( let item in pictureUplod.fileList){
+        urlList.push(pictureUplod.fileList[item].url)
+      }
+      console.log(urlList)
+      //用户输入的内容
+      let hivetmp = {
+        content: this.contentInput.toString(),
+        userId: this.user.id,
+        nickname: this.user.nickname,
+        type:'',
+        urls: urlList
+      }
+
+      this.$http.post("/api/exchange/post/save",hivetmp).then(res=>{
+        console.log("result",res.msg)
+      })
+      this.dialogVisible=false
+      this.reload()
+      //toDo
+      //发布新的hive
+    },
+    HiveButtonClick2(){
+      let pictureUplod = this.$refs.hiveForYouPublish
+      //用户上传的图片
+      let urlList = []
+      for( let item in pictureUplod.fileList){
+        urlList.push(pictureUplod.fileList[item].url)
+      }
+      console.log(urlList)
+      //用户输入的内容
+      let hivetmp = {
+        content: this.contentInput2.toString(),
+        userId: this.user.id,
+        nickname: this.user.nickname,
+        type:'',
+        urls: urlList
+      }
+      this.$http.post("/api/exchange/post/save",hivetmp).then(res=>{
+        console.log("result",res)
+      })
+      this.contentInput2=''
+      this.hivesUpload=false
       this.reload()
       //toDo
       //发布新的hive
@@ -351,6 +388,9 @@ export default {
     showCommentDialog(id){
       this.$refs.commentDialog.showDialog(id)
     },
+    PictureClick(){
+      this.dialogVisibleForYouUpload=true
+    }
   }
 }
 </script>
@@ -398,7 +438,7 @@ export default {
 }
 .Hive-button{
   margin-top: 20px;
-  margin-left: 460px;
+  margin-left: 55%;
   font-weight: bolder;
   font-size: 20px;
   background: #FFD103;

@@ -1,6 +1,7 @@
 <script setup>
 import {ref} from "vue";
 import SvgIcon from "@/components/SvgIcon.vue";
+import { InfoFilled } from '@element-plus/icons-vue'
 const activeIndex = ref('/profile')
 </script>
 
@@ -8,8 +9,19 @@ const activeIndex = ref('/profile')
 <!--  上方头像名字板块-->
   <div style="height:350px;position: relative">
     <el-image :src="this.profileImageUrl" :fit="'cover'" class="background-image"/>
-    <el-image :src="this.userImageUrl" :fit="'cover'" class="user-image"/>
-    <el-button round class="edit-background-button">Edit profile</el-button>
+    <el-popconfirm
+        width="300px"
+        confirm-button-text="OK"
+        cancel-button-text="No, Thanks"
+        :icon="InfoFilled"
+        icon-color="#626AEF"
+        @confirm="ShowProAndBackDialog"
+        title="Are you sure to edit your profile and background?"
+    >
+      <template #reference>
+        <el-image :src="this.userImageUrl" :fit="'cover'" class="user-image"/>
+      </template>
+    </el-popconfirm>
     <div class="follow-box">
       <div class="userInfo-box">
         <p class="user-name">{{this.userName}}</p>
@@ -117,10 +129,41 @@ const activeIndex = ref('/profile')
     <el-button round style="background: #FFD103;font-weight: bolder;border-radius: 95px;width: 100%" @click="EditHiveButtonClick">Edit</el-button>
   </div>
   </el-dialog>
+
+<!--  个人信息与背景编辑框-->
+  <el-dialog
+      v-model="ProAndBackEditDialogVisible"
+      title="Edit Profile and Background"
+      width="50%"
+  >
+    <el-form v-model="editForm" label-width="120px">
+      <el-form-item label="NickName:">
+        <el-input v-model="editForm.nickName"></el-input>
+      </el-form-item>
+      <el-form-item label="User Picture">
+        <el-upload
+            v-model:file-list="editForm.userImageUrl"
+            accept="#"
+            :auto-upload='false'
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreviewEditPro"
+            :on-change="handleChangePicture"
+        >
+          <el-icon><Plus /></el-icon>
+        </el-upload>
+
+        <el-dialog v-model="editForm.editProDialogVisible">
+          <img w-full :src="editForm.editProDialogImageUrl" alt="Preview Image" />
+        </el-dialog>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
 </template>
+
 
 <script>
 import CommentDialog from "../components/CommentDialog.vue";
+import {reactive} from "vue";
 export default {
   name: "ProfileView",
   components:{
@@ -184,7 +227,16 @@ export default {
       currentHiveIndex:0,
       editDialogVisible:false,
       hivesDialogImageUrl:'',
-      editDialogVisibleUpload:false
+      editDialogVisibleUpload:false,
+      ProAndBackEditDialogVisible:false,
+      editForm:reactive({
+        nickName:'',
+        userImageUrl:[],
+        userBackground:[],
+        birthday:'',
+        editProDialogVisible:false,
+        editProDialogImageUrl:'',
+      }),
     }
   },
   methods: {
@@ -235,7 +287,7 @@ export default {
       this.editImageList=this.hivesTable[index].url.map(item=>{
         return{
           name:item,
-          url:item
+          url:item,
         }
       })
     },
@@ -256,9 +308,32 @@ export default {
       this.hivesTable[this.currentHiveIndex].url=currentImageList
       this.hivesTable[this.currentHiveIndex].content=this.hiveContentInput
       this.editDialogVisible=false
+      //toDo
+      //编辑hive
+    },
+    ShowProAndBackDialog(){
+      this.editForm.userImageUrl.splice(0,1)
+      let tmpurl =[]
+      tmpurl.push(this.userImageUrl)
+      this.editForm.userImageUrl=Array.from(tmpurl).map(item=>{
+        return{
+          name:item,
+          url:item
+        }
+      })
+      this.editForm.userBackground.splice(0,1)
+      this.editForm.userBackground.push(this.profileImageUrl)
+      this.ProAndBackEditDialogVisible=true
+    },
+    handlePictureCardPreviewEditPro(file){
+      this.editForm.editProDialogVisible = true
+      this.editForm.editProDialogImageUrl = file.url
+    },
+    handleChangePicture(file,fileList){
+      if(fileList.length>1){
+        fileList.splice(0,1)
+      }
     }
-    //toDo
-    //编辑hive
   }
 }
 </script>
@@ -272,11 +347,11 @@ export default {
   width: 200px;
   height: 200px;
   border-radius: 200px;
-  bottom: 20%;
-  left: 5%;
   border-width: 10px;
   border-color: white;
   border-style:solid;
+  bottom: 20%;
+  left: 5%;
 }
 .follow-box{
   color: #606266;
