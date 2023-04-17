@@ -1,25 +1,23 @@
 <template>
   <el-upload
+      v-if="!isShow"
       v-model:file-list="fileList"
       :action="'http://upload-z2.qiniup.com'"
       list-type="picture-card"
       :on-preview="handlePictureCardPreview"
       :on-remove="handleRemove"
       :on-success="handleSuccess"
-      accept="image/*"
+      :limit="1"
       :data="dataObj"
   >
-    <el-icon><Plus /></el-icon>
+    <el-icon v-if="!isShow"><Plus /></el-icon>
   </el-upload>
-
-  <el-dialog v-model="dialogVisible_upload">
-    <img w-full :src="dialogImageUrl" alt="Preview Image" />
-  </el-dialog>
+  <video :src="dialogImageUrl" class="avatar" controls="controls" v-if="isShow" style="width: 100%"/>
 </template>
-<script>
 
+<script>
 export default {
-  name: "HivesPublish",
+  name: "VideoPublish",
   mounted(){
     this.getDirAndToken()
     this.actionUrl='http://rszvgtifo.hn-bkt.clouddn.com/'
@@ -29,6 +27,7 @@ export default {
       dialogVisible_upload: false,
       dialogImageUrl: "",
       fileList: [],
+      isShow:false,
       actionUrl:'',
       dataObj:{
         token:'',
@@ -42,7 +41,9 @@ export default {
         name:file.name,
         url:this.actionUrl+response.key
       })
-      console.log("url",response)
+      this.dialogImageUrl=file.url
+      console.log("url",fileList)
+      this.isShow=true
     },
     handleRemove(file, fileList) {
       console.log("file", file);
@@ -61,8 +62,9 @@ export default {
       })
     },
   },
-};
+}
 </script>
 
 <style scoped>
+
 </style>

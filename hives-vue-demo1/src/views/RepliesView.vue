@@ -1,24 +1,15 @@
 <template>
-  <el-upload
-      v-model:file-list="fileList"
-      accept="#"
-      :auto-upload='false'
-      list-type="picture-card"
-      :on-preview="handlePictureCardPreview"
-      :on-remove="handleRemove"
-      :http-request="UploadFun"
-  >
-    <el-icon><Plus /></el-icon>
-  </el-upload>
-
-  <el-dialog v-model="dialogVisible_upload">
-    <img w-full :src="dialogImageUrl" alt="Preview Image" />
-  </el-dialog>
+<!--  <video v-bind:src="'http://rszvgtifo.hn-bkt.clouddn.com/lg_4FeHKfXpj68hA-QkexUmClTcO'" class="avatar video-avatar" style="width: 50%"/>-->
 </template>
 
 <script>
+import VideoPublish from "../components/VideoPublish.vue";
+
 export default {
   name: "RepliesView",
+  components:{
+    VideoPublish
+  },
   data(){
     return{
       dialogVisible_upload:false,

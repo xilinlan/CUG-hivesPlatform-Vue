@@ -1,23 +1,22 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import Login from '../views/login.vue'
-import Register from '../views/register.vue'
 import NotificationsView from "../views/NotificationsView.vue";
 import ExploreView from "../views/ExploreView.vue";
-import ForyouView from "../views/ForyouView.vue";
 import FollowingView from "../views/FollowingView.vue";
 import ProfileView from "../views/ProfileView.vue";
 import RepliesView from "../views/RepliesView.vue";
 import MediaView from "../views/MediaView.vue";
 import LikesView from "../views/LikesView.vue";
+import LoginPage from "../views/LoginPage.vue";
+import login from "../views/login.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Login
+      name: 'LoginPage',
+      component: LoginPage
     },
     {
       path: '/about',
@@ -26,11 +25,6 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue')
-    },
-    {
-      path:'/register',
-      name: 'register',
-      component: Register
     },
     {
       path: '/home',

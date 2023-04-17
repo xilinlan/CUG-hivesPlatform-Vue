@@ -1,4 +1,5 @@
 <template>
+<!--  登录窗口-->
     <div class="loginbody">
     <div class="logindata">
       <div class="logintext">
@@ -57,6 +58,13 @@
       </div>
     </div>
   </div>
+<!--  注册窗口-->
+  <el-dialog
+      v-model="registerDialogVisible"
+      title="Register"
+      width="30%"
+  >
+  </el-dialog>
 </template>
 
 <script>
@@ -86,7 +94,8 @@ export default {
            { max: 20, message: "不能大于20个字符", trigger: "blur" },
         ]
       },
-      next: false
+      next: false,
+      registerDialogVisible:false
     };
   },
   mounted() {

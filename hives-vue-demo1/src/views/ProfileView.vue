@@ -26,6 +26,8 @@ const activeIndex = ref('/profile')
       <div class="userInfo-box">
         <p class="user-name">{{this.userName}}</p>
         <a class="user-count">{{this.userCount}}</a>
+        <el-icon style="margin-left: 5px"><Calendar /></el-icon>
+        <a class="user-count" style="margin-left: 5px">{{this.birthday}}</a>
       </div>
       <div style="margin-top: 20px">
         <a class="follow-number">{{this.FollowingNum}}</a>
@@ -99,7 +101,7 @@ const activeIndex = ref('/profile')
   <el-dialog
       v-model="editDialogVisible"
       title="Reply"
-      width="33.7%"
+      width="40%"
   >
   <div class="edit-hive-box">
     <el-input
@@ -111,21 +113,10 @@ const activeIndex = ref('/profile')
         style="width:100%;"
     >
     </el-input>
-    <el-upload
-        v-model:file-list="editImageList"
-        accept="#"
-        :auto-upload='false'
-        list-type="picture-card"
-        :on-preview="UploadHandlePictureCardPreview"
-        :on-remove="handleRemove"
-        style="margin-top: 5px"
-    >
-      <el-icon><Plus /></el-icon>
-    </el-upload>
+    <div style="margin-left: 5%;margin-top: 10px;margin-bottom: 10px">
+      <HivesEdit ref="hivesImageChange"/>
+    </div>
 
-    <el-dialog v-model="editDialogVisibleUpload">
-      <img w-full :src="hivesDialogImageUrl" alt="Preview Image" />
-    </el-dialog>
     <el-button round style="background: #FFD103;font-weight: bolder;border-radius: 95px;width: 100%" @click="EditHiveButtonClick">Edit</el-button>
   </div>
   </el-dialog>
@@ -134,29 +125,29 @@ const activeIndex = ref('/profile')
   <el-dialog
       v-model="ProAndBackEditDialogVisible"
       title="Edit Profile and Background"
-      width="50%"
+      width="35%"
   >
     <el-form v-model="editForm" label-width="120px">
       <el-form-item label="NickName:">
         <el-input v-model="editForm.nickName"></el-input>
       </el-form-item>
+      <el-form-item label="birthday:">
+        <el-date-picker
+            v-model="editForm.birthday"
+            type="date"
+            format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD"
+            placeholder="Pick a day"
+        />
+      </el-form-item>
       <el-form-item label="User Picture">
-        <el-upload
-            v-model:file-list="editForm.userImageUrl"
-            accept="#"
-            :auto-upload='false'
-            list-type="picture-card"
-            :on-preview="handlePictureCardPreviewEditPro"
-            :on-change="handleChangePicture"
-        >
-          <el-icon><Plus /></el-icon>
-        </el-upload>
-
-        <el-dialog v-model="editForm.editProDialogVisible">
-          <img w-full :src="editForm.editProDialogImageUrl" alt="Preview Image" />
-        </el-dialog>
+        <PictureChange ref="userImageChange"/>
+      </el-form-item>
+      <el-form-item label="Background Picture">
+        <PictureChange ref="groundImageChange"/>
       </el-form-item>
     </el-form>
+    <el-button round @click="EditProfileClick" style="margin-left: 25%;width: 50%;height: 50px;background-color:#FFD103">Save</el-button>
   </el-dialog>
 </template>
 
@@ -164,17 +155,35 @@ const activeIndex = ref('/profile')
 <script>
 import CommentDialog from "../components/CommentDialog.vue";
 import {reactive} from "vue";
+import HivesPublish from "../components/HivesPublish.vue";
+import PictureChange from "../components/PictureChange.vue";
+import HivesEdit from "../components/HivesEdit.vue";
+
 export default {
   name: "ProfileView",
   components:{
-    CommentDialog
+    CommentDialog,
+    HivesPublish,
+    PictureChange,
+    HivesEdit,
+  },
+  mounted() {
+    this.user = JSON.parse(window.sessionStorage.getItem('user'))
+    this.userImageUrl=this.user.header
+    this.userCount=this.user.email
+    this.userName = this.user.nickname
+    this.FollowingNum = this.user.followCount
+    this.FollowerNum = this.user.fansCount
+    this.birthday = this.user.birthday
   },
   data(){
     return{
+      user:{},
+      birthday:'',
       profileImageUrl:'https://ts1.cn.mm.bing.net/th/id/R-C.b233cea1db287ea1ca3e1888da90e6f4?rik=iYNZ47%2bCO2FY1g&riu=http%3a%2f%2fimg.mm4000.com%2ffile%2f4%2f6a%2f1f9bd1c552.jpg&ehk=CXpqivABe8%2bwJCsTp0cfer%2fiZCSuRYGXfLGmLH6kKlk%3d&risl=&pid=ImgRaw&r=0',
-      userImageUrl:'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-      userName:'TestName',
-      userCount:'XXXX@testEmail',
+      userImageUrl:'',
+      userName:'',
+      userCount:'',
       FollowingNum:14,
       FollowerNum:23,
       hivesTable:[
@@ -223,7 +232,6 @@ export default {
       ],
       commentInput:'',
       hiveContentInput:'',
-      editImageList:[],
       currentHiveIndex:0,
       editDialogVisible:false,
       hivesDialogImageUrl:'',
@@ -231,15 +239,19 @@ export default {
       ProAndBackEditDialogVisible:false,
       editForm:reactive({
         nickName:'',
-        userImageUrl:[],
-        userBackground:[],
         birthday:'',
-        editProDialogVisible:false,
-        editProDialogImageUrl:'',
       }),
     }
   },
   methods: {
+    EditProfileClick(){
+      console.log(this.$refs.userImageChange.fileList)
+      this.userImageUrl=this.$refs.userImageChange.fileList[0].url
+      this.profileImageUrl=this.$refs.groundImageChange.fileList[0].url
+      this.userName = this.editForm.nickName
+      this.birthday = this.editForm.birthday
+      this.ProAndBackEditDialogVisible = false
+    },
     handleSelect(index){
       this.$router.push(index)
     },
@@ -284,11 +296,14 @@ export default {
       this.currentHiveIndex=index
       this.editDialogVisible=true
       this.hiveContentInput=this.hivesTable[index].content
-      this.editImageList=this.hivesTable[index].url.map(item=>{
+      let editImageList=this.hivesTable[index].url.map(item=>{
         return{
           name:item,
           url:item,
         }
+      })
+      this.$nextTick(()=>{
+        this.$refs.hivesImageChange.initList(editImageList)
       })
     },
     handleRemove(file, fileList) {
@@ -299,10 +314,11 @@ export default {
       this.editDialogVisibleUpload = true;
     },
     EditHiveButtonClick(){
-      console.log("editImageList",this.editImageList)
+      let editImageList = this.$refs.hivesImageChange.fileList
+      console.log("editImageList",editImageList)
       let currentImageList=[]
-      for(let item in this.editImageList){
-        currentImageList.push(this.editImageList[item].url)
+      for(let item in editImageList){
+        currentImageList.push(editImageList[item].url)
       }
       console.log("currenImageList",currentImageList)
       this.hivesTable[this.currentHiveIndex].url=currentImageList
@@ -312,28 +328,31 @@ export default {
       //编辑hive
     },
     ShowProAndBackDialog(){
-      this.editForm.userImageUrl.splice(0,1)
-      let tmpurl =[]
-      tmpurl.push(this.userImageUrl)
-      this.editForm.userImageUrl=Array.from(tmpurl).map(item=>{
+      this.editForm.nickName = this.userName
+      this.editForm.birthday = this.birthday
+      this.ProAndBackEditDialogVisible=true
+      let tmpUrl=[]
+      tmpUrl.push(this.userImageUrl)
+      tmpUrl = tmpUrl.map(item=>{
         return{
           name:item,
-          url:item
+          url:item,
         }
       })
-      this.editForm.userBackground.splice(0,1)
-      this.editForm.userBackground.push(this.profileImageUrl)
-      this.ProAndBackEditDialogVisible=true
+      let tmpUrl2=[]
+      tmpUrl2.push(this.profileImageUrl)
+      tmpUrl2 = tmpUrl2.map(item=>{
+        return{
+          name:item,
+          url:item,
+        }
+      })
+      this.$nextTick(()=>{
+        this.$refs.userImageChange.initList(tmpUrl)
+        this.$refs.groundImageChange.initList(tmpUrl2)
+      })
+
     },
-    handlePictureCardPreviewEditPro(file){
-      this.editForm.editProDialogVisible = true
-      this.editForm.editProDialogImageUrl = file.url
-    },
-    handleChangePicture(file,fileList){
-      if(fileList.length>1){
-        fileList.splice(0,1)
-      }
-    }
   }
 }
 </script>
