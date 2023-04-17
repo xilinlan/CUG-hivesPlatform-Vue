@@ -69,7 +69,7 @@ const activeIndex = ref('/home')
                 </el-form-item>
                 <el-form-item :inline="true" style="margin-left: 5%">
                   <SvgIcon name="picture" className="picture" @click="PictureClick"/>
-                  <SvgIcon name="emoji" className="emoji"/>
+                  <SvgIcon name="emoji" className="emoji" @click.stop="emojiShow"/>
                   <SvgIcon name="file" className="file"/>
                   <SvgIcon name="location" className="location"/>
                   <SvgIcon name="tag" className="tag"/>
@@ -84,7 +84,9 @@ const activeIndex = ref('/home')
                 </el-form-item>
                 <el-divider/>
               </div>
-
+              <div class="emoji-container" v-show="emojihowVisible">
+                <emotion @chooseEmojiDefault="chooseEmojiDefault"></emotion>
+              </div>
 <!--              hive内容区-->
               <div v-for="(item,index) in HivesData" :key="index">
 
@@ -190,6 +192,8 @@ const activeIndex = ref('/home')
 import {ref} from "vue";
 import CommentDialog from "../components/CommentDialog.vue";
 import HivesPublish from "../components/HivesPublish.vue";
+import emotion     from "../components/emotion.vue";
+
 
 export default {
   mounted() {
@@ -199,10 +203,12 @@ export default {
   inject:['reload'],
   components:{
     CommentDialog,
-    HivesPublish
+    HivesPublish,
+    emotion
   },
   data(){
     return{
+      emojihowVisible:false,
       user:{},
       userImageUrl:'',
       contentInput:'',
@@ -303,12 +309,26 @@ export default {
     }
   },
   methods: {
+    //显示表情包
+    emojiShow(){
+     this.emojihowVisible = !this.emojihowVisible
+    },
+    chooseEmojiDefault(e){
+      this.contentInput += e
+      this.contentInput2 += e
+    },
+    //点击表情
+    emojiClick(emoji){
+      this.contentInput += emoji
+    },
+    //点击发布
     MeanClick(index){
       if(index!=="9"){
         this.$router.push(index);
       }
       else{
         this.dialogVisible=true;
+        console.log(this.dialogVisible)
       }
     },
     HiveButtonClick(){
@@ -395,6 +415,19 @@ export default {
 }
 </script>
 <style scoped>
+
+.emoji-container {
+  background-color: white;
+  width: 400px;
+  height: 210px;
+  position: fixed;
+  bottom: 450px;
+  right: 775px;
+  z-index: 10;
+  transition: all 0.2s;
+}
+
+
 .main-menu-item:hover{
   border-left:none !important;
   background-color:white;
