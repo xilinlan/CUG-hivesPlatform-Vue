@@ -1,4 +1,5 @@
 <template>
+<!--  登录窗口-->
     <div class="loginbody">
     <div class="logindata">
       <div class="logintext">
@@ -53,12 +54,17 @@
         <el-button type="primary" @click="login()"
           >返回登录</el-button
         >
-        <el-button class="shou" @click="sendCode" v-show="!this.is_sendCode&&!this.next">发送验证码</el-button>
-        <el-button class="shou" @click="validate" v-show="this.is_sendCode&&!this.next">确定</el-button>
-        <el-button class="shou" @click="register" v-show="this.next">注册</el-button>
-     </div>
+        <el-button class="shou" @click="sendCode">发送验证码</el-button>
+      </div>
     </div>
   </div>
+<!--  注册窗口-->
+  <el-dialog
+      v-model="registerDialogVisible"
+      title="Register"
+      width="30%"
+  >
+  </el-dialog>
 </template>
 
 <script>
@@ -84,12 +90,12 @@ export default {
           { max: 20, message: "不能大于20个字符", trigger: "blur" },
         ],
         determine: [
-           { required: true, message: "请再次输入密码", trigger: "blur" },
+           { required: true, message: "请输入密码", trigger: "blur" },
            { max: 20, message: "不能大于20个字符", trigger: "blur" },
         ]
       },
       next: false,
-      is_sendCode:false,
+      registerDialogVisible:false
     };
   },
   mounted() {
@@ -103,60 +109,18 @@ export default {
     forgetpas() {
     },
     sendCode(){
-      let params = {
-          "email": this.form.email
-      }
-      this.$http.get("/api/user/user/sendCode",{params}).then(res=>{
-        if(res.data.sendStatus===1){
-          this.$message({
-            message:res.data.msg,
-            type:'success'
-          })
-          this.is_sendCode=true
-        }else{
-          this.$message({
-            message:res.data.msg,
-            type:'error'
-          })
+        let params = {
+              "email": this.form.email
         }
-      })
+        this.$http.get("/api/user/user/sendCode", {params}).then(res=>{
+            this.next=!this.next
+              alert("已发送验证码!")
+          })
     },
     validate(){
-      let params = {
-        "email":this.form.email,
-        "code":this.form.code
-      }
-      this.$http.get("/api/user/user/validate?",{params}).then(res=>{
-        console.log(res)
-        if(res.data.correct===1){
-          this.$message({
-            message:res.data.msg,
-            type:'success'
-          })
-          this.next=!this.next
-        }else{
-          this.$message({
-            message:res.data.msg,
-            type:'error'
-          })
-        }
-      })
+
     },
     register() {
-      this.$http.post("/api/user/user/register",this.form).then(res=>{
-        if(res.data.regStatus===1){
-          this.$message({
-            message:res.data.msg,
-            type:'success'
-          })
-          this.$router.push("/")
-        }else{
-          this.$message({
-            message:res.data.msg,
-            type:'error'
-          })
-        }
-      })
     },
   },
 };

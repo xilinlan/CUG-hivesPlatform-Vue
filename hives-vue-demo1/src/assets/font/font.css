@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'cocacola';
+    src:url("../src/assets/font/cocacola.ttf");
+}
+
+@font-face {
+    font-family: 'stream-light';
+    src:url("../src/assets/font/连笔流光字体.ttf");
+}
+
+@font-face {
+    font-family: 'EU-style';
+    src:url("../src/assets/font/Take_Back.ttf");
+}

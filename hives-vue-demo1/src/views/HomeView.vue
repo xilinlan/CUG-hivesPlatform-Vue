@@ -13,6 +13,8 @@ const activeIndex = ref('/home')
         <el-aside width="30%">
           <el-scrollbar>
             <el-menu @select="MeanClick" class="el-menu-home">
+              <SvgIcon name="beeDog" class="logo"/>
+              <a class="logoTittle">Hives Platform</a>
               <el-menu-item class="main-menu-item" index="/home"><el-icon><Monitor /></el-icon>Home</el-menu-item>
               <el-menu-item class="main-menu-item" index="/explore"><el-icon><Search /></el-icon>Explore</el-menu-item>
               <el-menu-item class="main-menu-item" index="/notifications"><el-icon><Bell /></el-icon>Notifications</el-menu-item>
@@ -21,7 +23,7 @@ const activeIndex = ref('/home')
               <el-menu-item class="main-menu-item" index="6"><el-icon><Promotion /></el-icon>Hive Yellow</el-menu-item>
               <el-menu-item class="main-menu-item" index="/profile"><el-icon><UserFilled /></el-icon>Profile</el-menu-item>
               <el-menu-item class="main-menu-item" index="8"><el-icon><CirclePlus /></el-icon>More</el-menu-item>
-              <el-menu-item class="main-menu-item" index="9">Hive</el-menu-item>
+              <el-menu-item class="main-menu-item" index="9"><SvgIcon name="bee" class="bee"/>Hive</el-menu-item>
               <el-menu-item class="main-menu-item" index="10"><el-icon><Tools /></el-icon>Set</el-menu-item>
             </el-menu>
           </el-scrollbar>
@@ -69,7 +71,7 @@ const activeIndex = ref('/home')
                 </el-form-item>
                 <el-form-item :inline="true" style="margin-left: 5%">
                   <SvgIcon name="picture" className="picture" @click="PictureClick"/>
-                  <SvgIcon name="emoji" className="emoji" @click.stop="emojiShow"/>
+                  <SvgIcon name="emoji" className="emoji" @click="emojiShow"/>
                   <SvgIcon name="file" className="file"/>
                   <SvgIcon name="location" className="location"/>
                   <SvgIcon name="tag" className="tag"/>
@@ -82,10 +84,10 @@ const activeIndex = ref('/home')
                    @click="HiveButtonClick2"
                   >Hive</el-button>
                 </el-form-item>
+                <div class="emoji-container" v-show="emojiHowVisible">
+                  <emotion @chooseEmojiDefault="chooseEmojiDefault"/>
+                </div>
                 <el-divider/>
-              </div>
-              <div class="emoji-container" v-show="emojihowVisible">
-                <emotion @chooseEmojiDefault="chooseEmojiDefault"></emotion>
               </div>
 <!--              hive内容区-->
               <div v-for="(item,index) in HivesData" :key="index">
@@ -93,21 +95,21 @@ const activeIndex = ref('/home')
                 <el-row :gutter="20">
                   <el-col :span="4">
                     <div class="grid-content ep-bg-purple">
-                      <img :src="item.user_image" style="width: 70px; height: 70px;border-radius: 70px">
+                      <img :src="item.header" style="width: 70px; height: 70px;border-radius: 70px">
                     </div>
                   </el-col>
                   <el-col :span="20">
                     <div>
                       <div>
                         <a style="font-size: 20px;font-weight: bolder">{{item.nickname}}</a>
-                        <a style="color: #BEBEBE;margin-left: 5px">{{item.user_email}}</a>
+                        <a style="color: #BEBEBE;margin-left: 5px">{{item.email}}</a>
                         <a style="color: #BEBEBE"> . </a>
-                        <a style="color: #BEBEBE">{{item.time}}</a>
+                        <a style="color: #BEBEBE">{{item.updateTime}}</a>
                       </div>
                       <p>{{item.content}}</p>
                       <div>
                         <ul class="el-upload-list el-upload-list--picture-card">
-                          <li class="el-upload-list__item is-success" v-for="fit in item.url" :key="fit">
+                          <li class="el-upload-list__item is-success" v-for="fit in item.urls" :key="fit">
                             <img style="width: 100%; height: 100%" :src="fit" @click="handlePictureCardPreview(fit)"/>
                           </li>
                         </ul>
@@ -116,12 +118,12 @@ const activeIndex = ref('/home')
                     <div>
                       <SvgIcon name="love-g" className="Tips-tag" v-if="!item.isLove" @click="LoveClick(index)"/>
                       <SvgIcon name="love-p" className="Tips-tag" v-if="item.isLove" @click="LoveCancel(index)"/>
-                      <a class="tips_num">{{item.love}}</a>
+                      <a class="tips_num">{{item.likes}}</a>
                       <SvgIcon name="comment-g" className="Tips-tag" @click="showCommentDialog(item.id)"/>
-                      <a class="tips_num">{{item.comment_tips}}</a>
+                      <a class="tips_num">{{item.reply}}</a>
                       <SvgIcon name="collection-g" className="Tips-tag" v-if="!item.isCollect" @click="CollectClick(index)"/>
                       <SvgIcon name="collection-y" className="Tips-tag" v-if="item.isCollect" @click="ClickCancel(index)"/>
-                      <a class="tips_num">{{item.collection}}</a>
+                      <a class="tips_num">{{item.collects}}</a>
                       <SvgIcon name="statistics-g" className="Tips-tag" />
                       <a class="tips_num">{{item.hot}}</a>
                       <SvgIcon name="share-g" className="Tips-tag" />
@@ -192,13 +194,14 @@ const activeIndex = ref('/home')
 import {ref} from "vue";
 import CommentDialog from "../components/CommentDialog.vue";
 import HivesPublish from "../components/HivesPublish.vue";
-import emotion     from "../components/emotion.vue";
-
+import '../assets/font/font.css'
+import emotion from "../components/emotion.vue";
 
 export default {
   mounted() {
     this.user = JSON.parse(window.sessionStorage.getItem('user'))
     this.userImageUrl = this.user.header
+    this.initHivesShow()
   },
   inject:['reload'],
   components:{
@@ -208,7 +211,7 @@ export default {
   },
   data(){
     return{
-      emojihowVisible:false,
+      emojiHowVisible:false,
       user:{},
       userImageUrl:'',
       contentInput:'',
@@ -254,81 +257,33 @@ export default {
           num:'23,23M Hives'
         }
       ],
-      HivesData : [
-        {
-          id:1,
-          user_image:'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-          user_email:'#Retuers@XXXXX.com',
-          nickname:"Retuers",
-          time:'1h',
-          content:'UK finance minister says SVB rescue necessary to protect UK tech',
-          url:['https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-            'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-            'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-            'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-            'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-            'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',],
-          love:102,
-          comment_tips:67,
-          collection:88,
-          hot:9895,
-          isCollect:false,
-          isLove:false
-        },
-        {
-          id:2,
-          user_image:'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-          user_email:'#Retuers@XXXXX.com',
-          nickname:"Retuers",
-          time:'1h',
-          content:'UK finance minister says SVB rescue necessary to protect UK tech',
-          url:['https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg','https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',],
-          love:102,
-          comment_tips:67,
-          collection:88,
-          hot:9895,
-          isCollect:false,
-          isLove:false
-        },
-        {
-          id:3,
-          user_image:'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-          user_email:'#Retuers@XXXXX.com',
-          nickname:"Retuers",
-          time:'1h',
-          content:'UK finance minister says SVB rescue necessary to protect UK tech',
-          url:['https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg','https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',],
-          love:102,
-          comment_tips:67,
-          collection:88,
-          hot:9895,
-          isCollect:false,
-          isLove:false
-        },
-      ],
+      HivesData : [],
     }
   },
   methods: {
-    //显示表情包
-    emojiShow(){
-     this.emojihowVisible = !this.emojihowVisible
+    initHivesShow(){
+      let params={
+        page:1,
+        limit:10
+      }
+      this.$http.get('/api/exchange/post/list?',params).then(res=>{
+        console.log(res)
+        if(res.data.code===200){
+          this.HivesData=res.data.page.list
+        }else{
+          this.$message({
+            message: res.data.msg,
+            type: 'error'
+          })
+        }
+      })
     },
-    chooseEmojiDefault(e){
-      this.contentInput += e
-      this.contentInput2 += e
-    },
-    //点击表情
-    emojiClick(emoji){
-      this.contentInput += emoji
-    },
-    //点击发布
     MeanClick(index){
       if(index!=="9"){
         this.$router.push(index);
       }
       else{
         this.dialogVisible=true;
-        console.log(this.dialogVisible)
       }
     },
     HiveButtonClick(){
@@ -410,24 +365,18 @@ export default {
     },
     PictureClick(){
       this.dialogVisibleForYouUpload=true
+    },
+    chooseEmojiDefault(e){
+      this.contentInput += e
+      this.contentInput2 += e
+    },
+    emojiShow(){
+      this.emojiHowVisible = !this.emojiHowVisible
     }
   }
 }
 </script>
 <style scoped>
-
-.emoji-container {
-  background-color: white;
-  width: 400px;
-  height: 210px;
-  position: fixed;
-  bottom: 450px;
-  right: 775px;
-  z-index: 10;
-  transition: all 0.2s;
-}
-
-
 .main-menu-item:hover{
   border-left:none !important;
   background-color:white;
@@ -518,10 +467,36 @@ export default {
   height: 25px;
   margin-left: 50px;
 }
+.logo{
+  width: 100px;
+  height: 100px;
+  margin-left: 20px;
+}
+.logoTittle{
+  position: relative;
+  bottom: 40px;
+  margin-left: 10px;
+  font-weight: bolder;
+  font-family: 'cocacola';
+  font-size: 30px;
+}
 .tips_num{
   margin-left: 5px;
   position: relative;
   bottom: 5px
+}
+.bee{
+  width: 25px;
+  height: 25px;
+  margin-left: 50px;
+}
+.emoji-container {
+  background-color: white;
+  width: 400px;
+  height: 210px;
+  position: fixed;
+  z-index: 10;
+  transition: all 0.2s;
 }
 </style>
 
