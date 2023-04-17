@@ -6,7 +6,6 @@
       :on-preview="handlePictureCardPreview"
       :on-remove="handleRemove"
       :on-success="handleSuccess"
-      accept="image/*"
       :data="dataObj"
   >
     <el-icon><Plus /></el-icon>
@@ -16,10 +15,10 @@
     <img w-full :src="dialogImageUrl" alt="Preview Image" />
   </el-dialog>
 </template>
-<script>
 
+<script>
 export default {
-  name: "HivesPublish",
+  name: "HivesEdit",
   mounted(){
     this.getDirAndToken()
     this.actionUrl='http://rszvgtifo.hn-bkt.clouddn.com/'
@@ -28,14 +27,17 @@ export default {
     return {
       dialogVisible_upload: false,
       dialogImageUrl: "",
-      fileList: [],
       actionUrl:'',
+      fileList: [],
       dataObj:{
         token:'',
       },
     };
   },
   methods: {
+    initList(file){
+      this.fileList=file
+    },
     handleSuccess(response,file,fileList){
       fileList.pop()
       fileList.push({
@@ -61,8 +63,9 @@ export default {
       })
     },
   },
-};
+}
 </script>
 
 <style scoped>
+
 </style>
