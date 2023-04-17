@@ -16,3 +16,5 @@ need env
  npm i vite-plugin-svg-icons -D
 
 npm install fast-glob -D 
+
+npm install less -D

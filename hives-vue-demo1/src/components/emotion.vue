@@ -54,8 +54,8 @@ scroll-bar {
     width: 100%;
     height: 100%;
     background: #fff;
-    border: 1px solid #dcdfe6;
-    box-shadow: 0 2px 4px 0 rgb(0 0 0 / 12%), 0 0 6px 0 rgb(0 0 0 / 4%);
+    //border: 1px solid #dcdfe6;
+    //box-shadow: 0 2px 4px 0 rgb(0 0 0 / 12%), 0 0 6px 0 rgb(0 0 0 / 4%);
     .emoji-default {
         width: 400px;
         height: 202px;
