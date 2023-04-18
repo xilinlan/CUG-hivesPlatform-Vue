@@ -11,7 +11,6 @@ const activeIndex = ref('/home')
     <el-col :span="19"><div class="grid-content ep-bg-purple">
       <el-container class="layout-container-demo" >
         <el-aside width="30%">
-        <el-aside width="30%">
           <el-scrollbar>
             <el-menu @select="MeanClick" class="el-menu-home">
               <el-menu-item class="main-menu-item" index="/home"><el-icon><Monitor /></el-icon>Home</el-menu-item>
@@ -322,6 +321,10 @@ export default {
     HiveButtonClick(){
       this.dialogVisible=false;
       this.reload()
+      console.log("fileList",this.fileList[0].url)
+      this.$http.get("/api/third/oss/policy").then(res=>{
+        console.log(res)
+      })
       //toDo
       //发布新的hive
     },

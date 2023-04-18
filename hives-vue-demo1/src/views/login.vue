@@ -34,7 +34,7 @@
         </div>
       </div>
       <div class="butt">
-        <el-button type="primary" @click="logintest()"
+        <el-button type="primary" @click="login()"
           >登录</el-button
         >
         <el-button class="shou" @click="register">注册</el-button>
@@ -55,12 +55,11 @@ export default {
       },
       checked: false,
       rules: {
-        username: [
+        email: [
           { required: true, message: "请输入邮箱名", trigger: "blur" },
         ],
         password: [
           { required: true, message: "请输入密码", trigger: "blur" },
-          { max: 20, message: "不能大于20个字符", trigger: "blur" },
         ],
       },
     };
@@ -68,18 +67,32 @@ export default {
   mounted() {
   },
   methods: {
-    logintest(){
-      this.$router.push('/home')
-    },
     login() {
-        console.log(this.form.password)
-        console.log(this.form.email)
+        if(this.form.email===''||this.form.password==='')
+        {
+          return this.$message({
+            message: '请输入邮箱或密码',
+            type: 'error'
+          })
+        }
         this.$http.post('/api/user/user/login',this.form).then(res=>{
             console.log(res)
-            window.sessionStorage.setItem('user',res.data.user)
-        })
+            if(res.data.loginStatus === 1){
+                this.$message({
+                    message: '登录成功',
+                    type: 'success'
+                })
+                window.sessionStorage.setItem('user',res.data.user)
+                this.$router.push('/home')
+            }else{
+                this.$message({
+                    message: '登录失败',
+                    type: 'error'
+                })
+            }
+      })
     },
-    remenber(data){    
+    remenber(data){
     },
     forgetpas() {
     },
