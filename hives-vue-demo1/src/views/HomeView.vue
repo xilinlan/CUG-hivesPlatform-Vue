@@ -303,14 +303,13 @@ export default {
         type:'',
         urls: urlList
       }
-
+      //发布新的hive
       this.$http.post("/api/exchange/post/save",hivetmp).then(res=>{
         console.log("result",res.msg)
       })
       this.dialogVisible=false
       this.reload()
-      //toDo
-      //发布新的hive
+
     },
     HiveButtonClick2(){
       let pictureUplod = this.$refs.hiveForYouPublish
@@ -328,14 +327,13 @@ export default {
         type:'',
         urls: urlList
       }
+      //发布新的hive
       this.$http.post("/api/exchange/post/save",hivetmp).then(res=>{
         console.log("result",res)
       })
       this.contentInput2=''
       this.hivesUpload=false
       this.reload()
-      //toDo
-      //发布新的hive
     },
     LoveClick(index){
       this.HivesData[index].isLove=true

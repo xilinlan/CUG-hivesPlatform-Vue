@@ -123,7 +123,6 @@ export default {
   methods:{
     nextForgetPasswordStep(){
       if(this.registerActive===1){
-        //toDo
         //验证码对比验证
         console.log(1)
         let params = {
@@ -156,7 +155,6 @@ export default {
           this.timer = null;
         }
       }, 1000);
-      //toDo
       //发送邮件验证码
       let params = {
         "email": this.emailVerificationForm.email
@@ -172,6 +170,37 @@ export default {
     finishForgetPasswordStep(){
       //toDo
       //完成修改密码
+      let params = {
+        "email": this.emailVerificationForm.email,
+        "password":this.passwordSetForm.password,
+      }
+      this.$http.get("/api/user/user/updatePassword", {params}).then(res=>{
+        if (res.data.udpwStatus === 1)
+        {
+          this.$message({
+            message: '密码修改成功',
+            type: 'success'
+          })
+          this.forgetPasswordDialogVisible=false
+          this.reload()
+        }else if(res.data.udpwStatus === 0){
+          this.$message({
+            message: '密码修改失败',
+            type: 'error'
+          })
+        }else if(res.data.udpwStatus === 2){
+          this.$message({
+            message: '邮箱不存在',
+            type: 'error'
+          })
+        }else{
+          this.$message({
+            message: '与旧密码相同',
+            type: 'error'
+          })
+        }
+
+      })
     }
   }
 }

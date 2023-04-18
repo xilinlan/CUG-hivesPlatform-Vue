@@ -8,7 +8,7 @@ const activeIndex = ref('/profile')
 <template>
 <!--  上方头像名字板块-->
   <div style="height:350px;position: relative">
-    <el-image :src="this.profileImageUrl" :fit="'cover'" class="background-image"/>
+    <el-image :src="this.backImageUrl" :fit="'cover'" class="background-image"/>
     <el-popconfirm
         width="300px"
         confirm-button-text="OK"
@@ -175,12 +175,13 @@ export default {
     this.FollowingNum = this.user.followCount
     this.FollowerNum = this.user.fansCount
     this.birthday = this.user.birthday
+    this.backImageUrl = this.user.background
   },
   data(){
     return{
       user:{},
       birthday:'',
-      profileImageUrl:'https://ts1.cn.mm.bing.net/th/id/R-C.b233cea1db287ea1ca3e1888da90e6f4?rik=iYNZ47%2bCO2FY1g&riu=http%3a%2f%2fimg.mm4000.com%2ffile%2f4%2f6a%2f1f9bd1c552.jpg&ehk=CXpqivABe8%2bwJCsTp0cfer%2fiZCSuRYGXfLGmLH6kKlk%3d&risl=&pid=ImgRaw&r=0',
+      backImageUrl:'',
       userImageUrl:'',
       userName:'',
       userCount:'',
@@ -245,12 +246,29 @@ export default {
   },
   methods: {
     EditProfileClick(){
+      //用户点击保存按钮，将用户修改信息保存到数据库
       console.log(this.$refs.userImageChange.fileList)
       this.userImageUrl=this.$refs.userImageChange.fileList[0].url
-      this.profileImageUrl=this.$refs.groundImageChange.fileList[0].url
-      this.userName = this.editForm.nickName
+      this.backImageUrl=this.$refs.groundImageChange.fileList[0].url
+      this.nickname = this.editForm.nickName
       this.birthday = this.editForm.birthday
-      this.ProAndBackEditDialogVisible = false
+      let profile = {
+        id:this.user.id,
+        nickname:this.nickname,
+        birthday:this.birthday,
+        header:this.userImageUrl,
+        background:this.backImageUrl
+      }
+      this.$http.post('api/user/user/updatePersonal',profile).then(res=>{
+        console.log(res)
+        if(res.data.udppStatus===1){
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          });
+          this.ProAndBackEditDialogVisible = false
+        }
+      })
     },
     handleSelect(index){
       this.$router.push(index)
@@ -340,7 +358,7 @@ export default {
         }
       })
       let tmpUrl2=[]
-      tmpUrl2.push(this.profileImageUrl)
+      tmpUrl2.push(this.backImageUrl)
       tmpUrl2 = tmpUrl2.map(item=>{
         return{
           name:item,

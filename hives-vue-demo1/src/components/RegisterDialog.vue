@@ -150,7 +150,6 @@ export default {
   methods:{
     nextRegisterStep(){
       if(this.registerActive===1){
-        //toDo
         //验证码对比验证
         let params = {
           "email": this.emailVerificationForm.email,
@@ -213,7 +212,6 @@ export default {
       })
     },
     finishRegisterStep(){
-      //toDo
       //完成注册
       let params={
         "nickname":this.infoSetForm.nickname,
