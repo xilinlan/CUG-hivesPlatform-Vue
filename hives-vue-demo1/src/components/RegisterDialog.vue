@@ -152,7 +152,6 @@ export default {
       if(this.registerActive===1){
         //toDo
         //验证码对比验证
-        console.log(1)
         let params = {
           "email": this.emailVerificationForm.email,
           "code":this.emailVerificationForm.code
@@ -200,7 +199,7 @@ export default {
           this.timer = null;
         }
       }, 1000);
-      //toDo
+
       //发送邮件验证码
       let params = {
         "email": this.emailVerificationForm.email

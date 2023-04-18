@@ -264,9 +264,10 @@ export default {
     initHivesShow(){
       let params={
         page:1,
-        limit:10
+        limit:10,
+        userId:this.user.id
       }
-      this.$http.get('/api/exchange/post/list?',params).then(res=>{
+      this.$http.get('/api/exchange/post/list?',{params}).then(res=>{
         console.log(res)
         if(res.data.code===200){
           this.HivesData=res.data.page.list

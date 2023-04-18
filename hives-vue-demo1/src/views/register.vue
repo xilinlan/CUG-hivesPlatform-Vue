@@ -12,7 +12,7 @@
               v-model="form.email"
               clearable
               placeholder="请输入注册邮箱"
-              
+
             ></el-input>
           </el-form-item>
           <el-form-item prop="nickname" v-show="this.next">
@@ -104,7 +104,7 @@ export default {
     login(form) {
         this.$router.push("/")
     },
-    remenber(data){    
+    remenber(data){
     },
     forgetpas() {
     },
