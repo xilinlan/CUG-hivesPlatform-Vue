@@ -288,13 +288,14 @@ export default {
       }
     },
     HiveButtonClick(){
-      let pictureUplod = this.$refs.hivesMenuPublish
-      //用户上传的图片
+      // 用户上传的图片
       let urlList = []
-      for( let item in pictureUplod.fileList){
-        urlList.push(pictureUplod.fileList[item].url)
+      if(this.$refs.hiveForYouPublish!==undefined){
+        let pictureUplod = this.$refs.hiveForYouPublish
+        for( let item in pictureUplod.fileList){
+          urlList.push(pictureUplod.fileList[item].url)
+        }
       }
-      console.log(urlList)
       //用户输入的内容
       let hivetmp = {
         content: this.contentInput.toString(),
@@ -312,14 +313,15 @@ export default {
 
     },
     HiveButtonClick2(){
-      let pictureUplod = this.$refs.hiveForYouPublish
-      //用户上传的图片
+      // 用户上传的图片
       let urlList = []
-      for( let item in pictureUplod.fileList){
-        urlList.push(pictureUplod.fileList[item].url)
+      if(this.$refs.hiveForYouPublish!==undefined){
+        let pictureUplod = this.$refs.hiveForYouPublish
+        for( let item in pictureUplod.fileList){
+          urlList.push(pictureUplod.fileList[item].url)
+        }
       }
-      console.log(urlList)
-      //用户输入的内容
+      // 用户输入的内容
       let hivetmp = {
         content: this.contentInput2.toString(),
         userId: this.user.id,
@@ -327,9 +329,10 @@ export default {
         type:'',
         urls: urlList
       }
+      // console.log('content:'+hivetmp.content)
       //发布新的hive
       this.$http.post("/api/exchange/post/save",hivetmp).then(res=>{
-        console.log("result",res)
+        console.log("result",res.msg)
       })
       this.contentInput2=''
       this.hivesUpload=false
@@ -366,7 +369,6 @@ export default {
       this.dialogVisibleForYouUpload=true
     },
     chooseEmojiDefault(e){
-      this.contentInput += e
       this.contentInput2 += e
     },
     emojiShow(){
