@@ -18,11 +18,11 @@ const activeIndex = ref('/home')
               <el-menu-item class="main-menu-item" index="/home"><el-icon><Monitor /></el-icon>Home</el-menu-item>
               <el-menu-item class="main-menu-item" index="/explore"><el-icon><Search /></el-icon>Explore</el-menu-item>
               <el-menu-item class="main-menu-item" index="/notifications"><el-icon><Bell /></el-icon>Notifications</el-menu-item>
-              <el-menu-item class="main-menu-item" index="4"><el-icon><Message /></el-icon>Message</el-menu-item>
+              <el-menu-item class="main-menu-item" index="/message"><el-icon><Message /></el-icon>Message</el-menu-item>
               <el-menu-item class="main-menu-item" index="5"><el-icon><Star /></el-icon>Bookmarks</el-menu-item>
-              <el-menu-item class="main-menu-item" index="6"><el-icon><Promotion /></el-icon>Hive Yellow</el-menu-item>
+              <el-menu-item class="main-menu-item" index="6"><el-icon><Promotion /></el-icon>Hive Pro+</el-menu-item>
               <el-menu-item class="main-menu-item" index="/profile"><el-icon><UserFilled /></el-icon>Profile</el-menu-item>
-              <el-menu-item class="main-menu-item" index="8"><el-icon><CirclePlus /></el-icon>More</el-menu-item>
+              <el-menu-item class="main-menu-item" index="8"><el-icon><CirclePlus /></el-icon>More Function</el-menu-item>
               <el-menu-item class="main-menu-item" index="9"><SvgIcon name="bee" class="bee"/>Hive</el-menu-item>
               <el-menu-item class="main-menu-item" index="10"><el-icon><Tools /></el-icon>Set</el-menu-item>
             </el-menu>
@@ -41,7 +41,7 @@ const activeIndex = ref('/home')
                   @select="MeanClick"
               >
                 <el-menu-item index="/home" style="width: 50%">For you</el-menu-item>
-                <el-menu-item index="/following" style="width: 50%">Following</el-menu-item>
+                <el-menu-item index="/following" style="width: 40%">Following</el-menu-item>
               </el-menu>
             </div>
           </el-header>
@@ -95,7 +95,11 @@ const activeIndex = ref('/home')
                 <el-row :gutter="20">
                   <el-col :span="4">
                     <div class="grid-content ep-bg-purple">
-                      <img :src="item.header" style="width: 70px; height: 70px;border-radius: 70px">
+                      <el-popconfirm title="Are you sure to visit profile?" @confirm="visitOtherProfile(item)">
+                        <template #reference>
+                          <img :src="item.header" style="width: 70px; height: 70px;border-radius: 70px">
+                        </template>
+                      </el-popconfirm>
                     </div>
                   </el-col>
                   <el-col :span="20">
@@ -119,7 +123,7 @@ const activeIndex = ref('/home')
                       <SvgIcon name="love-g" className="Tips-tag" v-if="!item.isLove" @click="LoveClick(index)"/>
                       <SvgIcon name="love-p" className="Tips-tag" v-if="item.isLove" @click="LoveCancel(index)"/>
                       <a class="tips_num">{{item.likes}}</a>
-                      <SvgIcon name="comment-g" className="Tips-tag" @click="showCommentDialog(item.id)"/>
+                      <SvgIcon name="comment-g" className="Tips-tag" @click="showCommentDialog(item)"/>
                       <a class="tips_num">{{item.reply}}</a>
                       <SvgIcon name="collection-g" className="Tips-tag" v-if="!item.isCollect" @click="CollectClick(index)"/>
                       <SvgIcon name="collection-y" className="Tips-tag" v-if="item.isCollect" @click="ClickCancel(index)"/>
@@ -132,7 +136,16 @@ const activeIndex = ref('/home')
                 </el-row>
                 <el-divider/>
               </div>
+
+<!--              更多内容按钮-->
+              <el-pagination
+                  class="Page-Menu"
+                  v-model:current-page="currentPage"
+                  layout="prev, pager, next"
+                  :total="totalCount"
+                  @current-change="initHivesShow" />
             </div>
+
 
 
           </el-main>
@@ -202,12 +215,25 @@ export default {
     this.user = JSON.parse(window.sessionStorage.getItem('user'))
     this.userImageUrl = this.user.header
     this.initHivesShow()
+    window.addEventListener('scroll', this.scrollToTop)
   },
   inject:['reload'],
   components:{
     CommentDialog,
     HivesPublish,
     emotion
+  },
+  watch: {
+    $route() {
+      if(this.$router.currentRoute.value.path==='/home'||
+          this.$router.currentRoute.value.path==='/explore'||
+          this.$router.currentRoute.value.path==='/notifications'||
+          this.$router.currentRoute.value.path==='/message'||
+          this.$router.currentRoute.value.path==='/profile'){
+        location.reload();
+      }
+
+    },
   },
   data(){
     return{
@@ -258,12 +284,14 @@ export default {
         }
       ],
       HivesData : [],
+      totalCount:0,
+      currentPage:1,
     }
   },
   methods: {
     initHivesShow(){
       let params={
-        page:1,
+        page:this.currentPage,
         limit:10,
         userId:this.user.id
       }
@@ -271,6 +299,7 @@ export default {
         console.log(res)
         if(res.data.code===200){
           this.HivesData=res.data.page.list
+          this.totalCount=res.data.page.totalCount
         }else{
           this.$message({
             message: res.data.msg,
@@ -340,30 +369,66 @@ export default {
     },
     LoveClick(index){
       this.HivesData[index].isLove=true
-      this.HivesData[index].love=this.HivesData[index].love+1
+      this.HivesData[index].likes=this.HivesData[index].likes+1
       //toDo
       //点赞
+      let params={
+        "userId":this.user.id,
+        "postId":this.HivesData[index].id
+      }
+      console.log(params)
+      this.$http.post('/api/exchange/postlikes/update?',params).then(ref=>{
+        console.log("点赞",ref)
+      })
     },
     LoveCancel(index){
       this.HivesData[index].isLove=false
-      this.HivesData[index].love=this.HivesData[index].love-1
+      this.HivesData[index].likes=this.HivesData[index].likes-1
       //toDo
       //取消点赞
+      let params={
+        "userId":this.user.id,
+        "postId":this.HivesData[index].id
+      }
+
+      this.$http.post('/api/exchange/postlikes/update?',params).then(ref=>{
+        console.log("取消点赞",ref)
+      })
     },
     CollectClick(index){
       this.HivesData[index].isCollect=true
-      this.HivesData[index].collection=this.HivesData[index].collection+1
+      this.HivesData[index].collects=this.HivesData[index].collects+1
       //toDo
       //收藏
+
+      let params={
+        "userId":this.user.id,
+        "postId":this.HivesData[index].id
+      }
+
+      this.$http.post('/api/exchange/postcollects/update?',params).then(ref=>{
+        console.log("收藏",ref)
+      })
+
     },
     ClickCancel(index){
       this.HivesData[index].isCollect=false
-      this.HivesData[index].collection=this.HivesData[index].collection-1
+      this.HivesData[index].collects=this.HivesData[index].collects-1
       //toDO
       //取消收藏
+
+      let params={
+        "userId":this.user.id,
+        "postId":this.HivesData[index].id
+      }
+
+      this.$http.post('/api/exchange/postcollects/update?',params).then(ref=>{
+        console.log("取消收藏",ref)
+      })
+
     },
-    showCommentDialog(id){
-      this.$refs.commentDialog.showDialog(id)
+    showCommentDialog(hive){
+      this.$refs.commentDialog.showDialog(hive)
     },
     PictureClick(){
       this.dialogVisibleForYouUpload=true
@@ -373,6 +438,10 @@ export default {
     },
     emojiShow(){
       this.emojiHowVisible = !this.emojiHowVisible
+    },
+    visitOtherProfile(item){
+      console.log(item)
+      this.$router.push({path: '/other-profile',query:{ userId:item.userId}});
     }
   }
 }
@@ -498,6 +567,12 @@ export default {
   position: fixed;
   z-index: 10;
   transition: all 0.2s;
+}
+.Page-Menu{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
 }
 </style>
 
