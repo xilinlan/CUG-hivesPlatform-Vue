@@ -241,20 +241,16 @@ export default {
     EditProfileClick(){
       //用户点击保存按钮，将用户修改信息保存到数据库
       console.log(this.$refs.userImageChange.fileList)
-      this.userImageUrl=this.$refs.userImageChange.fileList[0].url
-      this.backImageUrl=this.$refs.groundImageChange.fileList[0].url
-      this.nickname = this.editForm.nickName
-      this.birthday = this.editForm.birthday
       let profile = {
         id:this.user.id,
-        nickname:this.nickname,
-        birthday:this.birthday,
-        header:this.userImageUrl,
-        background:this.backImageUrl
+        nickname:this.editForm.nickName,
+        birthday:this.editForm.birthday,
+        header:this.$refs.userImageChange.fileList[0].url,
+        background:this.$refs.groundImageChange.fileList[0].url
       }
-      this.$http.post('api/user/user/updatePersonal',profile).then(res=>{
+      this.$http.post('api/user/user/update',profile).then(res=>{
         console.log(res)
-        if(res.data.udppStatus===1){
+        if(res.data.code===200){
 
           let user = sessionStorage.getItem("user");
           if (user != null) {
@@ -274,6 +270,17 @@ export default {
             message: '修改成功',
             type: 'success'
           });
+          this.userImageUrl=this.$refs.userImageChange.fileList[0].url
+          this.backImageUrl=this.$refs.groundImageChange.fileList[0].url
+          this.nickname = this.editForm.nickName
+          this.birthday = this.editForm.birthday
+          this.ProAndBackEditDialogVisible = false
+        }
+        else{
+          this.$message({
+            message:res.data.msg,
+            type:'error'
+          })
           this.ProAndBackEditDialogVisible = false
         }
       })
