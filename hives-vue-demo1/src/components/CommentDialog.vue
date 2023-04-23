@@ -90,6 +90,28 @@
       </el-form-item>
     </div>
   </el-dialog>
+
+  <!--  回复窗口2-->
+  <el-dialog
+      v-model="replyDialogVisible2"
+      title="Reply"
+      width="40%"
+  >
+    <!--    回复输入框2-->
+    <div class="comment-reply-box">
+      <el-form-item :inline="true">
+        <el-input
+            class="reply-input"
+            v-model="replyInput2"
+            placeholder="Please input your reply"
+            style="width:60%;margin-left: 10px;"
+        >
+        </el-input>
+        <el-button round style="background: #FFD103;font-weight: bolder;border-radius: 95px" @click="replyButtonClick2">Reply</el-button>
+      </el-form-item>
+    </div>
+  </el-dialog>
+
 </template>
 
 <script>
@@ -112,6 +134,9 @@ export default {
       hivesID:0,
       replyItem:{},
       currentCommentIndex:0,
+      replyDialogVisible2:false,
+      replyInput2:'',
+      commentItem:{},
     }
   },
   methods:{
@@ -126,11 +151,12 @@ export default {
       // toDo
       //根据id获取该动态的评论
       let params={
-        postId:this.hivesID
+        "postId":this.hivesID
       }
       this.$http.get('/api/exchange/reply/firstLevelComments?',{params}).then(ref=>{
         if(ref.data.code===200){
           this.commentList=ref.data.data
+          console.log('comment',ref)
         }
         else {
           this.$message({
@@ -172,7 +198,7 @@ export default {
 
       //更新评论
       let params={
-        postId:this.hivesID
+        "postId":this.hivesID
       }
       this.$http.get('/api/exchange/reply/firstLevelComments?',{params}).then(ref=>{
         if(ref.data.code===200){
@@ -195,12 +221,77 @@ export default {
     },
 
     replyToReply(index,replyItem,item){
-
+      this.replyDialogVisible2=true
+      this.currentCommentIndex=index
+      this.replyItem=replyItem
+      this.commentItem=item
     },
 
     handleClose(){
       this.commentInput=''
       this.dialogVisible=false
+    },
+
+    replyButtonClick(){
+      let item={
+        "postId":this.hivesID,
+        "replyId":this.replyItem.id,
+        "userId":this.user.id,
+        "targetId":this.hive.userId,
+        "reply1Id":this.replyItem.id,
+        "content":this.replyInput
+      }
+      this.$http.post('/api/exchange/reply/save',item).then(ref=>{
+        console.log("回复",ref)
+        //更新评论
+        let params={
+          "postId":this.hivesID
+        }
+        this.$http.get('/api/exchange/reply/firstLevelComments?',{params}).then(ref=>{
+          if(ref.data.code===200){
+            this.commentList=ref.data.data
+            console.log('reply_comment',ref)
+          }
+          else {
+            this.$message({
+              message: ref.data.msg,
+              type: 'error'
+            })
+          }
+        })
+      })
+      this.replyDialogVisible=false
+    },
+    replyButtonClick2(){
+      let item={
+        "postId":this.hivesID,
+        "replyId":this.replyItem.id,
+        "userId":this.user.id,
+        "targetId":this.replyItem.userId,
+        "reply1Id":this.commentItem.id,
+        "content":this.replyInput2
+      }
+
+      this.$http.post('/api/exchange/reply/save',item).then(ref=>{
+        console.log("回复",ref)
+        //更新评论
+        let params={
+          "postId":this.hivesID
+        }
+        this.$http.get('/api/exchange/reply/firstLevelComments?',{params}).then(ref=>{
+          if(ref.data.code===200){
+            this.commentList=ref.data.data
+            console.log('reply_comment',ref)
+          }
+          else {
+            this.$message({
+              message: ref.data.msg,
+              type: 'error'
+            })
+          }
+        })
+      })
+      this.replyDialogVisible2=false
     }
   },
 }
