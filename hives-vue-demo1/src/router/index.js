@@ -8,7 +8,8 @@ import RepliesView from "../views/RepliesView.vue";
 import MediaView from "../views/MediaView.vue";
 import LikesView from "../views/LikesView.vue";
 import LoginPage from "../views/LoginPage.vue";
-import login from "../views/login.vue";
+import MessageView from "../views/MessageView.vue";
+import OtherProfileView from "../views/OtherProfileView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -67,7 +68,17 @@ const router = createRouter({
               component:LikesView,
             },
           ]
-        }
+        },
+        {
+          path:'/message',
+          name:'MessageView',
+          component:MessageView,
+        },
+        {
+          path:'/other-profile',
+          name:'OtherProfileView',
+          component:OtherProfileView,
+        },
       ]
     },
   ]

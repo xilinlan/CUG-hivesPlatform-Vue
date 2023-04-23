@@ -5,6 +5,7 @@
       v-model="dialogVisible"
       title="COMMENT"
       width="40%"
+      :before-close="handleClose"
   >
 <!--    评论顶部输入区域-->
     <div class="comment-input-box">
@@ -25,37 +26,37 @@
     <div class="each-comment" v-for="(item,index) in commentList" :key="index">
       <el-row>
         <el-col :span="2">
-          <el-avatar :src="item.user_image"></el-avatar>
+          <el-avatar :src="item.header"></el-avatar>
         </el-col>
         <el-col :span="23.3">
           <div>
-            <h1 style="font-weight: bolder;color: #181818;font-size: 15px">{{item.user_nickname}}</h1>
-            <p style="font-size: 10px;color: #696969;font-weight: lighter">{{ item.create_time }}</p>
+            <h1 style="font-weight: bolder;color: #181818;font-size: 15px">{{item.userNickname}}</h1>
+            <p style="font-size: 10px;color: #696969;font-weight: lighter">{{ item.createTime }}</p>
             <p style="font-weight: lighter;color: #181818;font-size: 15px;">{{item.content}}</p>
           </div>
           <el-icon><Comment /></el-icon>
-          <a class="Comment-reply-num">{{item.reply_num}}</a>
+          <a class="Comment-reply-num">{{item.replyNum}}</a>
           <SvgIcon name="reply" style="width: 16px; height: 16px; margin-left: 30px;margin-bottom:1px" @click="replyToComment(index,item)"></SvgIcon>
           <a class="Comment-reply-num" style="color: #4682B4" @click="replyToComment(index,item)">回复</a>
 
 <!--            评论回复显示区-->
 
-          <el-collapse @change="getReplyButtonClick(index,item.reply_id)" style="border:none">
-            <el-collapse-item v-if="item.reply_num!==0" style="width: 100%">
-              <div class="each-reply" v-for="replyItem in item.reply_data" style="width: 100%">
+          <el-collapse style="border:none">
+            <el-collapse-item v-if="item.replyNum!==0" style="width: 100%">
+              <div class="each-reply" v-for="replyItem in item.replyVoList" style="width: 100%">
                 <el-row>
                   <el-col :span="1.9">
-                    <el-avatar :src="replyItem.user_image"></el-avatar>
+                    <el-avatar :src="replyItem.header"></el-avatar>
                   </el-col>
                   <el-col :span="21.4">
                     <div style="width: 100%">
-                      <h1 style="font-weight: bolder;color: #181818;font-size: 15px">{{replyItem.user_nickname}}</h1>
-                      <p style="font-size: 10px;color: #696969;font-weight: lighter">{{replyItem.create_time }}</p>
-                      <a style="font-weight: lighter;color:#4682B4;font-size: 15px">回复{{replyItem.target_nickname}}: </a>
+                      <h1 style="font-weight: bolder;color: #181818;font-size: 15px">{{replyItem.userNickname}}</h1>
+                      <p style="font-size: 10px;color: #696969;font-weight: lighter">{{replyItem.createTime }}</p>
+                      <a style="font-weight: lighter;color:#4682B4;font-size: 15px">回复{{replyItem.targetNickname}}: </a>
                       <p style="width:100%;font-weight: lighter;color: #181818;font-size: 15px">{{replyItem.content}}</p>
                     </div>
-                    <SvgIcon name="reply" style="width: 16px; height: 16px;margin-bottom:1px" @click="replyToComment(index,replyItem)"></SvgIcon>
-                    <a class="Comment-reply-num" style="color: #4682B4" @click="replyToComment(index,replyItem)">回复</a>
+                    <SvgIcon name="reply" style="width: 16px; height: 16px;margin-bottom:1px" @click="replyToReply(index,replyItem,item)"></SvgIcon>
+                    <a class="Comment-reply-num" style="color: #4682B4" @click="replyToReply(index,replyItem,item)">回复</a>
                   </el-col>
                   <el-divider/>
                 </el-row>
@@ -89,6 +90,28 @@
       </el-form-item>
     </div>
   </el-dialog>
+
+  <!--  回复窗口2-->
+  <el-dialog
+      v-model="replyDialogVisible2"
+      title="Reply"
+      width="40%"
+  >
+    <!--    回复输入框2-->
+    <div class="comment-reply-box">
+      <el-form-item :inline="true">
+        <el-input
+            class="reply-input"
+            v-model="replyInput2"
+            placeholder="Please input your reply"
+            style="width:60%;margin-left: 10px;"
+        >
+        </el-input>
+        <el-button round style="background: #FFD103;font-weight: bolder;border-radius: 95px" @click="replyButtonClick2">Reply</el-button>
+      </el-form-item>
+    </div>
+  </el-dialog>
+
 </template>
 
 <script>
@@ -100,6 +123,8 @@ export default {
   },
   data(){
     return{
+      user:{},
+      hive:{},
       dialogVisible:false,
       replyDialogVisible:false,
       userImageUrl:'',
@@ -109,125 +134,83 @@ export default {
       hivesID:0,
       replyItem:{},
       currentCommentIndex:0,
+      replyDialogVisible2:false,
+      replyInput2:'',
+      commentItem:{},
     }
   },
   methods:{
-    showDialog(id){
-      this.hivesID=id
+    showDialog(hive){
+      this.hivesID=hive.id
+      this.hive=hive
       // toDo
       //用户信息的获取
-      this.userImageUrl='https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
+      this.user = JSON.parse(window.sessionStorage.getItem('user'))
+      this.userImageUrl = this.user.header
+
       // toDo
       //根据id获取该动态的评论
-      this.commentList = [
-        {
-          id:1,
-          post_id:2,
-          reply_id:1,
-          content:'UK finance minister says SVB rescue necessary to protect UK tech',
-          create_time:'2023年4月6日 16:16',
-          user_id:232,
-          target_id:64,
-          user_nickname:'Visitor1',
-          target_nickname:'Retuers',
-          reply_num:2,
-          user_image:'https://img.wxcha.com/m00/12/db/594dd9fb43029a58df9acc0e4591d94b.jpg',
-          reply_data:[],
-        },
-        {
-          id:1,
-          post_id:2,
-          reply_id:1,
-          content:'UK finance minister says SVB rescue necessary to protect UK tech',
-          create_time:'2023年4月6日 16:16',
-          user_id:232,
-          target_id:64,
-          user_nickname:'Visitor2',
-          target_nickname:'Retuers',
-          reply_num:0,
-          user_image:'https://img.wxcha.com/m00/21/32/187b6676378e5bcfe15cd58cea0aa7f3.jpg',
-          reply_data:[]
-        },
-        {
-          id:1,
-          post_id:2,
-          reply_id:1,
-          content:'UK finance minister says SVB rescue necessary to protect UK tech',
-          create_time:'2023年4月6日 16:16',
-          user_id:232,
-          target_id:64,
-          user_nickname:'Visitor2',
-          target_nickname:'Retuers',
-          reply_num:1,
-          user_image:'https://img.wxcha.com/m00/21/32/187b6676378e5bcfe15cd58cea0aa7f3.jpg',
-          reply_data:[]
-        },
-      ]
+      let params={
+        "postId":this.hivesID
+      }
+      this.$http.get('/api/exchange/reply/firstLevelComments?',{params}).then(ref=>{
+        if(ref.data.code===200){
+          this.commentList=ref.data.data
+          console.log('comment',ref)
+        }
+        else {
+          this.$message({
+            message: ref.data.msg,
+            type: 'error'
+          })
+        }
+      })
+
       this.dialogVisible=true;
     },
-    getReplyButtonClick(index,reply_id){
-      // toDo
-      //根据reply_id获得对应评论的所有回复
-      console.log(index)
-      this.commentList[index].reply_data=[
-        {
-          id:1,
-          post_id:2,
-          reply_id:1,
-          content:'我的思路：. 1.首先input_box是我在最外层新增的样式（也可以使用 样式穿透 ，看个人选择）。',
-          create_time:'2023年4月6日 16:16',
-          user_id:232,
-          target_id:64,
-          user_nickname:'Retuers',
-          target_nickname:'Visitor1',
-          user_image:'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-        },
-        {
-          id:1,
-          post_id:2,
-          reply_id:1,
-          content:'我的思路：. 1.首先input_box是我在最外层新增的样式（也可以使用 样式穿透 ，看个人选择）。',
-          create_time:'2023年4月6日 16:16',
-          user_id:232,
-          target_id:64,
-          user_nickname:'Vistor2',
-          target_nickname:'Retuers',
-          user_image:'https://img.wxcha.com/m00/39/43/e6ae8ffa55fb94cb153dc68478f34487.jpg',
-        }
-      ]
-    },
-    getMoment(){
-      var date=new Date();
-      var year=date.getFullYear();
-      /* 在日期格式中，月份是从0开始的，因此要加0
-       * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
-       * */
-      var month= date.getMonth()+1<10 ? "0"+(date.getMonth()+1) : date.getMonth()+1;
-      var day=date.getDate()<10 ? "0"+date.getDate() : date.getDate();
-      var hours=date.getHours()<10 ? "0"+date.getHours() : date.getHours();
-      var minutes=date.getMinutes()<10 ? "0"+date.getMinutes() : date.getMinutes();
-      // 拼接
-      return year+"年"+month+"月"+day+"日 "+hours+":"+minutes;
-    },
+
     commentInputButton(){
       // toDo
       //根据发送用户信息，评论内容，动态id到后端，后端完成评论记录并返回一下格式的数据
       var item ={
-        id:1,
-        post_id:2,
-        reply_id:1,
+        "postId":this.hivesID,
+        "userId":this.user.id,
+        "targetId":this.hive.userId,
+        "replyId":0,
         content:this.commentInput,
-        create_time:this.getMoment(),
-        user_id:232,
-        target_id:64,
-        user_nickname:'TestName',
-        target_nickname:'',
-        reply_num:0,
-        user_image:this.userImageUrl,
-        reply_data:[],
       }
-      this.commentList.push(item)
-      this.commentInput=''
+
+      this.$http.post('/api/exchange/reply/save',item).then(ref=>{
+        if(ref.data.code===200){
+          this.$message({
+            message: ref.data.msg,
+            type: 'success'
+          })
+          this.commentInput=''
+        }
+        else{
+          this.$message({
+            message: ref.data.msg,
+            type: 'error'
+          })
+        }
+      })
+
+      //更新评论
+      let params={
+        "postId":this.hivesID
+      }
+      this.$http.get('/api/exchange/reply/firstLevelComments?',{params}).then(ref=>{
+        if(ref.data.code===200){
+          this.commentList=ref.data.data
+        }
+        else {
+          this.$message({
+            message: ref.data.msg,
+            type: 'error'
+          })
+        }
+      })
     },
 
     replyToComment(index,item){
@@ -237,27 +220,78 @@ export default {
       console.log(item)
     },
 
+    replyToReply(index,replyItem,item){
+      this.replyDialogVisible2=true
+      this.currentCommentIndex=index
+      this.replyItem=replyItem
+      this.commentItem=item
+    },
+
+    handleClose(){
+      this.commentInput=''
+      this.dialogVisible=false
+    },
+
     replyButtonClick(){
-      var index = this.currentCommentIndex
-      // toDo
-      //前端返回输入内容和回复评论或回复的id，后端进行存储并返回下面格式的回复内容
-      var item = {
-        id:1,
-        post_id:2,
-        reply_id:1,
-        content:this.replyInput,
-        create_time:this.getMoment(),
-        user_id:12312,
-        target_id:this.replyItem.user_id,
-        user_nickname:'testName',
-        target_nickname:this.replyItem.user_nickname,
-        user_image:this.userImageUrl,
+      let item={
+        "postId":this.hivesID,
+        "replyId":this.replyItem.id,
+        "userId":this.user.id,
+        "targetId":this.hive.userId,
+        "reply1Id":this.replyItem.id,
+        "content":this.replyInput
       }
-      console.log(this.commentList[this.currentCommentIndex])
-      this.commentList[index].reply_data.push(item)
-      this.commentList[index].reply_num=this.commentList[index].reply_num+1
+      this.$http.post('/api/exchange/reply/save',item).then(ref=>{
+        console.log("回复",ref)
+        //更新评论
+        let params={
+          "postId":this.hivesID
+        }
+        this.$http.get('/api/exchange/reply/firstLevelComments?',{params}).then(ref=>{
+          if(ref.data.code===200){
+            this.commentList=ref.data.data
+            console.log('reply_comment',ref)
+          }
+          else {
+            this.$message({
+              message: ref.data.msg,
+              type: 'error'
+            })
+          }
+        })
+      })
       this.replyDialogVisible=false
-      this.replyInput=''
+    },
+    replyButtonClick2(){
+      let item={
+        "postId":this.hivesID,
+        "replyId":this.replyItem.id,
+        "userId":this.user.id,
+        "targetId":this.replyItem.userId,
+        "reply1Id":this.commentItem.id,
+        "content":this.replyInput2
+      }
+
+      this.$http.post('/api/exchange/reply/save',item).then(ref=>{
+        console.log("回复",ref)
+        //更新评论
+        let params={
+          "postId":this.hivesID
+        }
+        this.$http.get('/api/exchange/reply/firstLevelComments?',{params}).then(ref=>{
+          if(ref.data.code===200){
+            this.commentList=ref.data.data
+            console.log('reply_comment',ref)
+          }
+          else {
+            this.$message({
+              message: ref.data.msg,
+              type: 'error'
+            })
+          }
+        })
+      })
+      this.replyDialogVisible2=false
     }
   },
 }

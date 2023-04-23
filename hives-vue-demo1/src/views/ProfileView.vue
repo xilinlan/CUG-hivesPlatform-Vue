@@ -2,13 +2,13 @@
 import {ref} from "vue";
 import SvgIcon from "@/components/SvgIcon.vue";
 import { InfoFilled } from '@element-plus/icons-vue'
-const activeIndex = ref('/profile')
+
 </script>
 
 <template>
 <!--  上方头像名字板块-->
   <div style="height:350px;position: relative">
-    <el-image :src="this.profileImageUrl" :fit="'cover'" class="background-image"/>
+    <el-image :src="this.backImageUrl" :fit="'cover'" class="background-image"/>
     <el-popconfirm
         width="300px"
         confirm-button-text="OK"
@@ -66,7 +66,7 @@ const activeIndex = ref('/profile')
               <p style="margin-bottom: 10px;font-size: 20px">{{ item.content }}</p>
               <div>
                 <ul class="el-upload-list el-upload-list--picture-card">
-                  <li class="el-upload-list__item is-success" v-for="fit in item.url" :key="fit">
+                  <li class="el-upload-list__item is-success" v-for="fit in item.urls" :key="fit">
                     <img style="width: 100%; height: 100%" :src="fit" @click="handlePictureCardPreview(fit)"/>
                   </li>
                 </ul>
@@ -74,12 +74,12 @@ const activeIndex = ref('/profile')
               <div>
                 <SvgIcon name="love-g" className="Tips-tag" v-if="!item.isLove" @click="LoveClick(index)"/>
                 <SvgIcon name="love-p" className="Tips-tag" v-if="item.isLove" @click="LoveCancel(index)"/>
-                <a class="tips_num">{{item.love}}</a>
-                <SvgIcon name="comment-g" className="Tips-tag" @click="showCommentDialog(item.id)"/>
-                <a class="tips_num">{{item.comment_tips}}</a>
+                <a class="tips_num">{{item.likes}}</a>
+                <SvgIcon name="comment-g" className="Tips-tag" @click="showCommentDialog(item)"/>
+                <a class="tips_num">{{item.reply}}</a>
                 <SvgIcon name="collection-g" className="Tips-tag" v-if="!item.isCollect" @click="CollectClick(index)"/>
                 <SvgIcon name="collection-y" className="Tips-tag" v-if="item.isCollect" @click="ClickCancel(index)"/>
-                <a class="tips_num">{{item.collection}}</a>
+                <a class="tips_num">{{item.collects}}</a>
                 <SvgIcon name="statistics-g" className="Tips-tag" />
                 <a class="tips_num">{{item.hot}}</a>
                 <SvgIcon name="share-g" className="Tips-tag" />
@@ -154,7 +154,7 @@ const activeIndex = ref('/profile')
 
 <script>
 import CommentDialog from "../components/CommentDialog.vue";
-import {reactive} from "vue";
+import {reactive, ref} from "vue";
 import HivesPublish from "../components/HivesPublish.vue";
 import PictureChange from "../components/PictureChange.vue";
 import HivesEdit from "../components/HivesEdit.vue";
@@ -175,61 +175,19 @@ export default {
     this.FollowingNum = this.user.followCount
     this.FollowerNum = this.user.fansCount
     this.birthday = this.user.birthday
+    this.backImageUrl = this.user.background
   },
   data(){
     return{
       user:{},
       birthday:'',
-      profileImageUrl:'https://ts1.cn.mm.bing.net/th/id/R-C.b233cea1db287ea1ca3e1888da90e6f4?rik=iYNZ47%2bCO2FY1g&riu=http%3a%2f%2fimg.mm4000.com%2ffile%2f4%2f6a%2f1f9bd1c552.jpg&ehk=CXpqivABe8%2bwJCsTp0cfer%2fiZCSuRYGXfLGmLH6kKlk%3d&risl=&pid=ImgRaw&r=0',
+      backImageUrl:'',
       userImageUrl:'',
       userName:'',
       userCount:'',
       FollowingNum:14,
       FollowerNum:23,
-      hivesTable:[
-        {
-          id:1,
-          time:'2023年4月6日 16:16',
-          content:'UK finance minister says SVB rescue necessary to protect UK tech',
-          url:['https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-            'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-            'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-            'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-            'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-            'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',],
-          love:102,
-          comment_tips:67,
-          collection:88,
-          hot:9895,
-          isCollect:false,
-          isLove:false,
-          isDelete:false,
-        },
-        {
-          id:2,
-          time:'2023年4月6日 16:16',
-          content:'UK finance minister says SVB rescue necessary to protect UK tech',
-          url:['https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg','https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',],
-          love:102,
-          comment_tips:67,
-          collection:88,
-          hot:9895,
-          isCollect:false,
-          isLove:false
-        },
-        {
-          id:3,
-          time:'2023年4月6日 16:16',
-          content:'UK finance minister says SVB rescue necessary to protect UK tech',
-          url:['https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg','https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',],
-          love:102,
-          comment_tips:67,
-          collection:88,
-          hot:9895,
-          isCollect:false,
-          isLove:false
-        },
-      ],
+      hivesTable:[],
       commentInput:'',
       hiveContentInput:'',
       currentHiveIndex:0,
@@ -241,16 +199,52 @@ export default {
         nickName:'',
         birthday:'',
       }),
+      activeIndex: ref('/profile')
     }
   },
   methods: {
+    initProfileHives(){
+
+    },
     EditProfileClick(){
+      //用户点击保存按钮，将用户修改信息保存到数据库
       console.log(this.$refs.userImageChange.fileList)
       this.userImageUrl=this.$refs.userImageChange.fileList[0].url
-      this.profileImageUrl=this.$refs.groundImageChange.fileList[0].url
-      this.userName = this.editForm.nickName
+      this.backImageUrl=this.$refs.groundImageChange.fileList[0].url
+      this.nickname = this.editForm.nickName
       this.birthday = this.editForm.birthday
-      this.ProAndBackEditDialogVisible = false
+      let profile = {
+        id:this.user.id,
+        nickname:this.nickname,
+        birthday:this.birthday,
+        header:this.userImageUrl,
+        background:this.backImageUrl
+      }
+      this.$http.post('api/user/user/updatePersonal',profile).then(res=>{
+        console.log(res)
+        if(res.data.udppStatus===1){
+
+          let user = sessionStorage.getItem("user");
+          if (user != null) {
+            // 将JSON格式的对象解析为js对象，currentUser为一个js对象
+            let currentUser= JSON.parse(user);
+            sessionStorage.removeItem("user");
+            currentUser.id=this.user.id
+            currentUser.nickname=this.nickname
+            currentUser.birthday=this.birthday
+            currentUser.header=this.userImageUrl
+            currentUser.background=this.backImageUrl
+
+            window.sessionStorage.setItem('user',JSON.stringify(currentUser))
+          }
+
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          });
+          this.ProAndBackEditDialogVisible = false
+        }
+      })
     },
     handleSelect(index){
       this.$router.push(index)
@@ -340,7 +334,7 @@ export default {
         }
       })
       let tmpUrl2=[]
-      tmpUrl2.push(this.profileImageUrl)
+      tmpUrl2.push(this.backImageUrl)
       tmpUrl2 = tmpUrl2.map(item=>{
         return{
           name:item,

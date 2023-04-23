@@ -74,7 +74,6 @@ export default {
   },
   methods:{
     login(){
-      console.log("login")
       if(this.form.email===''||this.form.password==='')
       {
         console.log("error")
