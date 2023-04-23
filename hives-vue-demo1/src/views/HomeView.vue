@@ -343,7 +343,7 @@ export default {
       this.$refs.hivesMenuPublish.initHiveList([])
       this.contentInput=''
       this.dialogVisible=false
-      // this.reload()
+      this.reload()
 
     },
     HiveButtonClick2(){
@@ -371,6 +371,7 @@ export default {
       this.contentInput2=''
       this.$refs.hiveForYouPublish.initHiveList([])
       this.dialogVisibleForYouUpload=false
+      this.reload()
     },
     LoveClick(index){
       this.HivesData[index].isLove=true

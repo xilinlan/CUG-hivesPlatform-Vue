@@ -62,7 +62,7 @@ import { InfoFilled } from '@element-plus/icons-vue'
 <!--          默认第一选择hives内容-->
           <div v-if="this.$router.currentRoute.value.path==='/profile'">
             <div v-for="(item,index) in hivesTable" :key="index">
-              <p style="color: #606266">{{ item.time}}</p>
+              <p style="color: #606266">{{ item.updateTime}}</p>
               <p style="margin-bottom: 10px;font-size: 20px">{{ item.content }}</p>
               <div>
                 <ul class="el-upload-list el-upload-list--picture-card">
@@ -88,6 +88,16 @@ import { InfoFilled } from '@element-plus/icons-vue'
               </div>
               <el-divider/>
             </div>
+
+<!--            分页按钮-->
+            <!--              更多内容按钮-->
+            <el-pagination
+                class="Page-Menu"
+                v-model:current-page="currentPage"
+                layout="prev, pager, next"
+                :total="totalCount"
+                @current-change="initProfileHives" />
+
           </div>
         </el-main>
       </el-container>
@@ -176,6 +186,7 @@ export default {
     this.FollowerNum = this.user.fansCount
     this.birthday = this.user.birthday
     this.backImageUrl = this.user.background
+    this.initProfileHives()
   },
   data(){
     return{
@@ -199,12 +210,33 @@ export default {
         nickName:'',
         birthday:'',
       }),
-      activeIndex: ref('/profile')
+      activeIndex: ref('/profile'),
+      limit:10,
+      totalCount:0,
+      currentPage:1,
     }
   },
   methods: {
     initProfileHives(){
+      let params={
+        "page":this.currentPage,
+        "limit":this.limit,
+        "userId":this.user.id
+      }
 
+      this.$http.get('/api/exchange/post/own?',{params}).then(ref=>{
+        console.log("profile",ref.data)
+        if(ref.data.code===200){
+          this.hivesTable=ref.data.page.list
+          this.totalCount=ref.data.page.totalCount
+        }
+        else{
+          this.$message({
+            message:ref.data.msg,
+            typr:'erroe'
+          })
+        }
+      })
     },
     EditProfileClick(){
       //用户点击保存按钮，将用户修改信息保存到数据库
@@ -255,27 +287,63 @@ export default {
     },
     LoveClick(index){
       this.hivesTable[index].isLove=true
-      this.hivesTable[index].love=this.hivesTable[index].love+1
+      this.hivesTable[index].likes=this.hivesTable[index].likes+1
       // toDo
       //用户点击点赞按钮，数据库点赞数+1
+      let params={
+        "userId":this.user.id,
+        "postId":this.hivesTable[index].id
+      }
+      console.log(params)
+      this.$http.post('/api/exchange/postlikes/update?',params).then(ref=>{
+        console.log("点赞",ref)
+      })
     },
     LoveCancel(index){
       this.hivesTable[index].isLove=false
-      this.hivesTable[index].love=this.hivesTable[index].love-1
+      this.hivesTable[index].likes=this.hivesTable[index].likes-1
       // toDo
       //用户再次点击点赞按钮，数据库点赞数-1
+      let params={
+        "userId":this.user.id,
+        "postId":this.hivesTable[index].id
+      }
+      console.log(params)
+      this.$http.post('/api/exchange/postlikes/update?',params).then(ref=>{
+        console.log("点赞",ref)
+      })
     },
     CollectClick(index){
       this.hivesTable[index].isCollect=true
-      this.hivesTable[index].collection=this.hivesTable[index].collection+1
+      this.hivesTable[index].collects=this.hivesTable[index].collects+1
       // toDo
       //用户点击收藏按钮，数据库收藏数+1
+
+      let params={
+        "userId":this.user.id,
+        "postId":this.hivesTable[index].id
+      }
+
+      this.$http.post('/api/exchange/postcollects/update?',params).then(ref=>{
+        console.log("收藏",ref)
+      })
+
     },
     ClickCancel(index){
       this.hivesTable[index].isCollect=false
-      this.hivesTable[index].collection=this.hivesTable[index].collection-1
+      this.hivesTable[index].collects=this.hivesTable[index].collects-1
       // toDo
       //用户再次点击收藏按钮，数据库收藏数-1
+
+      let params={
+        "userId":this.user.id,
+        "postId":this.hivesTable[index].id
+      }
+
+      this.$http.post('/api/exchange/postcollects/update?',params).then(ref=>{
+        console.log("收藏",ref)
+      })
+
     },
     showCommentDialog(id){
       this.$refs.commentDialog.showDialog(id)
