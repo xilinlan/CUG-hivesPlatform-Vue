@@ -36,6 +36,9 @@ export default {
     };
   },
   methods: {
+    initHiveList(fileList){
+      this.fileList=fileList
+    },
     handleSuccess(response,file,fileList){
       fileList.pop()
       fileList.push({

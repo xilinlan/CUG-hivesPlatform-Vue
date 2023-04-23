@@ -319,26 +319,31 @@ export default {
     HiveButtonClick(){
       // 用户上传的图片
       let urlList = []
-      if(this.$refs.hiveForYouPublish!==undefined){
-        let pictureUplod = this.$refs.hiveForYouPublish
+      if(this.$refs.hivesMenuPublish!==undefined){
+        let pictureUplod = this.$refs.hivesMenuPublish
+        console.log(pictureUplod)
         for( let item in pictureUplod.fileList){
           urlList.push(pictureUplod.fileList[item].url)
         }
       }
       //用户输入的内容
-      let hivetmp = {
-        content: this.contentInput.toString(),
-        userId: this.user.id,
-        nickname: this.user.nickname,
-        type:'',
-        urls: urlList
+      let params = {
+        "content": this.contentInput.toString(),
+        "userId": this.user.id,
+        "nickname": this.user.nickname,
+        "type":'',
+        "urls": urlList
       }
+      console.log('params',params)
+      console.log('urlList',urlList)
       //发布新的hive
-      this.$http.post("/api/exchange/post/save",hivetmp).then(res=>{
+      this.$http.post("/api/exchange/post/save",params).then(res=>{
         console.log("result",res.msg)
       })
+      this.$refs.hivesMenuPublish.initHiveList([])
+      this.contentInput=''
       this.dialogVisible=false
-      this.reload()
+      // this.reload()
 
     },
     HiveButtonClick2(){
@@ -351,21 +356,21 @@ export default {
         }
       }
       // 用户输入的内容
-      let hivetmp = {
-        content: this.contentInput2.toString(),
-        userId: this.user.id,
-        nickname: this.user.nickname,
-        type:'',
+      let params = {
+        "content": this.contentInput2.toString(),
+        "userId": this.user.id,
+        "nickname": this.user.nickname,
+        "type":'',
         urls: urlList
       }
       // console.log('content:'+hivetmp.content)
       //发布新的hive
-      this.$http.post("/api/exchange/post/save",hivetmp).then(res=>{
+      this.$http.post("/api/exchange/post/save",params).then(res=>{
         console.log("result",res.msg)
       })
       this.contentInput2=''
-      this.hivesUpload=false
-      this.reload()
+      this.$refs.hiveForYouPublish.initHiveList([])
+      this.dialogVisibleForYouUpload=false
     },
     LoveClick(index){
       this.HivesData[index].isLove=true
