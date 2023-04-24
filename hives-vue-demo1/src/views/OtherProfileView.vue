@@ -1,7 +1,4 @@
-<script setup>
-import SvgIcon from "@/components/SvgIcon.vue";
-import { InfoFilled } from '@element-plus/icons-vue'
-</script>
+
 
 <template>
     <!--  上方头像名字板块-->
@@ -22,6 +19,11 @@ import { InfoFilled } from '@element-plus/icons-vue'
           <a style="margin-left: 5px">Followers</a>
         </div>
       </div>
+      <div class="focus-box">
+        <el-button style="  background-color: #FFD103;width: 100px;height: 40px;color: white" round v-if="!isFollow" @click="focusButtonClick"><el-icon><CirclePlus /></el-icon>关注</el-button>
+        <el-button style="  background-color: #EEE7E7;width: 100px;height: 40px;color: #808080" round v-if="isFollow" @click="cancelFocusButtonClick"><el-icon><CircleCheck /></el-icon>已关注</el-button>
+      </div>
+
     </div>
       <!--  下方导航栏与内容-->
       <div class="other-box">
@@ -36,8 +38,8 @@ import { InfoFilled } from '@element-plus/icons-vue'
                   @select="handleSelect"
               >
                 <el-menu-item index="1" class="menu-item">Hives</el-menu-item>
-                <el-menu-item index="2" class="menu-item">Replies</el-menu-item>
-                <el-menu-item index="3" class="menu-item">Media</el-menu-item>
+                <el-menu-item index="2" class="menu-item">Media</el-menu-item>
+                <el-menu-item index="3" class="menu-item">Replies</el-menu-item>
                 <el-menu-item index="4">Likes</el-menu-item>
               </el-menu>
             </el-header>
@@ -70,21 +72,85 @@ import { InfoFilled } from '@element-plus/icons-vue'
                   </div>
                   <el-divider/>
                 </div>
-              </div>
 
+                <!--            分页按钮-->
+                <el-pagination
+                    class="Page-Menu"
+                    v-model:current-page="currentPage"
+                    layout="prev, pager, next"
+                    :total="totalCount"
+                    @current-change="initProfileHives" />
+              </div>
+<!--               收藏内容-->
+              <div class="Hives-Box" v-if="activeIndex==='4'">
+                <div v-for="(item,index) in likesHivesList" :key="index">
+                  <div v-if="item.isCollect">
+                    <el-row :gutter="20">
+                      <el-col :span="4">
+                        <div class="grid-content ep-bg-purple">
+                          <img :src="item.header" style="width: 70px; height: 70px;border-radius: 70px">
+                        </div>
+                      </el-col>
+                      <el-col :span="20">
+                        <div>
+                          <div>
+                            <a style="font-size: 20px;font-weight: bolder">{{item.nickname}}</a>
+                            <a style="color: #BEBEBE;margin-left: 5px">{{item.email}}</a>
+                            <a style="color: #BEBEBE"> . </a>
+                            <a style="color: #BEBEBE">{{item.updateTime}}</a>
+                          </div>
+                          <p>{{item.content}}</p>
+                          <div>
+                            <ul class="el-upload-list el-upload-list--picture-card">
+                              <li class="el-upload-list__item is-success" v-for="fit in item.urls" :key="fit">
+                                <img style="width: 100%; height: 100%" :src="fit" @click="handlePictureCardPreview(fit)"/>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <div>
+                          <SvgIcon name="love-g" className="Tips-tag" v-if="!item.isLove" />
+                          <SvgIcon name="love-p" className="Tips-tag" v-if="item.isLove" />
+                          <a class="tips_num">{{item.likes}}</a>
+                          <SvgIcon name="comment-g" className="Tips-tag" @click="showCommentDialog(item)"/>
+                          <a class="tips_num">{{item.reply}}</a>
+                          <SvgIcon name="collection-y" className="Tips-tag" v-if="item.isCollect"/>
+                          <a class="tips_num">{{item.collects}}</a>
+                          <SvgIcon name="statistics-g" className="Tips-tag" />
+                          <a class="tips_num">{{item.hot}}</a>
+                          <SvgIcon name="share-g" className="Tips-tag" />
+                        </div>
+                      </el-col>
+                    </el-row>
+                    <el-divider/>
+                  </div>
+                </div>
+              </div>
             </el-main>
           </el-container>
         </div>
 
 
     </div>
+
+  <!--  评论对话框-->
+  <CommentDialog ref="commentDialog"/>
+
 </template>
 
 <script>
 
+import CommentDialog from "../components/CommentDialog.vue";
+import SvgIcon from "../components/svgIcon.vue";
+
 export default {
   name: "OtherProfileView",
+  components:{
+    CommentDialog,
+    SvgIcon,
+  },
   mounted() {
+    this.user = JSON.parse(window.sessionStorage.getItem('user'))
     this.initUser()
   },
   data(){
@@ -101,17 +167,28 @@ export default {
       },
       activeIndex:'1',
       hivesList:[],
+      currentPage:1,
+      totalCount:0,
+      isFollow:false,
+      likesHivesList:[],
+      likesCurrentPage:1,
+      likesTotalCount:0,
     }
   },
   methods:{
     initUser(){
       var id = this.$route.query.userId;
       console.log(id);
-      this.$http.get('/api/user/user/info/'+id).then(ref=>{
+      let params={
+        "userId":this.user.id,
+        "targetId":id
+      }
+      this.$http.get('/api/user/follow/getOtherUserInfo?',{params}).then(ref=>{
         if(ref.data.code===200){
-          this.otherUser=ref.data.user
+          this.otherUser=ref.data.otherUserInfo
+          this.isFollow=this.otherUser.isFollow
           console.log("otherUser",this.otherUser)
-          this.initHivesList()
+          this.initProfileHives()
         }
         else {
           this.$message({
@@ -122,27 +199,161 @@ export default {
         }
       })
     },
-    initHivesList(){
-      console.log('success')
+    initProfileHives(){
       let params={
-        "page":1,
-        "limit":10,
+        "page":this.currentPage,
+        "limit":this.limit,
         "userId":this.otherUser.id
       }
-      this.$http.get('/api/exchange/post/list?',{params}).then(ref=>{
-        console.log(ref)
+
+      this.$http.get('/api/exchange/post/own?',{params}).then(ref=>{
+        console.log("profile",ref.data)
         if(ref.data.code===200){
           this.hivesList=ref.data.page.list
-          console.log("用户界面",ref.data.page.list)
+          this.totalCount=ref.data.page.totalCount
+        }
+        else{
+          this.$message({
+            message:ref.data.msg,
+            typr:'erroe'
+          })
+        }
+      })
+    },
+    initLikesHives(){
+      let params={
+        "page":this.likesCurrentPage,
+        "limit":this.limit,
+        "userId":this.otherUser.id
+      }
+      this.$http.get('/api/exchange/postcollects/list?',{params}).then(ref=>{
+        console.log(ref)
+        if(ref.data.code===200){
+          this.likesHivesList=ref.data.page.list
         }
       })
     },
     handleSelect(index){
       this.activeIndex=index
+      if(index==='1'){
+        this.initProfileHives()
+      }
+      else if(index==='4'){
+        this.initLikesHives()
+      }
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
+    },
+    LoveClick(index){
+      this.hivesList[index].isLove=true
+      this.hivesList[index].likes=this.hivesList[index].likes+1
+      // toDo
+      //用户点击点赞按钮，数据库点赞数+1
+      let params={
+        "userId":this.user.id,
+        "postId":this.hivesList[index].id
+      }
+      console.log(params)
+      this.$http.post('/api/exchange/postlikes/update?',params).then(ref=>{
+        console.log("点赞",ref)
+      })
+    },
+    LoveCancel(index){
+      this.hivesList[index].isLove=false
+      this.hivesList[index].likes=this.hivesList[index].likes-1
+      // toDo
+      //用户再次点击点赞按钮，数据库点赞数-1
+      let params={
+        "userId":this.user.id,
+        "postId":this.hivesList[index].id
+      }
+      console.log(params)
+      this.$http.post('/api/exchange/postlikes/update?',params).then(ref=>{
+        console.log("点赞",ref)
+      })
+    },
+    CollectClick(index){
+      this.hivesList[index].isCollect=true
+      this.hivesList[index].collects=this.hivesList[index].collects+1
+      // toDo
+      //用户点击收藏按钮，数据库收藏数+1
+
+      let params={
+        "userId":this.user.id,
+        "postId":this.hivesList[index].id
+      }
+
+      this.$http.post('/api/exchange/postcollects/update?',params).then(ref=>{
+        console.log("收藏",ref)
+      })
+
+    },
+    ClickCancel(index){
+      this.hivesList[index].isCollect=false
+      this.hivesList[index].collects=this.hivesList[index].collects-1
+      // toDo
+      //用户再次点击收藏按钮，数据库收藏数-1
+
+      let params={
+        "userId":this.user.id,
+        "postId":this.hivesList[index].id
+      }
+
+      this.$http.post('/api/exchange/postcollects/update?',params).then(ref=>{
+        console.log("收藏",ref)
+      })
+
+    },
+    showCommentDialog(id){
+      this.$refs.commentDialog.showDialog(id)
+    },
+    focusButtonClick(){
+
+      //toDo
+      //关注用户
+      let params={
+        "userId":this.user.id,
+        "targetId":this.otherUser.id
+      }
+      this.$http.post('/api/user/follow/save?',params).then(ref=>{
+        if(ref.data.code===200){
+          this.$message({
+            message:"关注成功",
+            type:'success'
+          })
+          this.isFollow=true
+        }else{
+          this.$message({
+            message:"关注失败",
+            type:'error'
+          })
+        }
+      })
+    },
+    cancelFocusButtonClick(){
+
+      //toDo
+      //取消关注用户
+      let params={
+        "userId":this.user.id,
+        "targetId":this.otherUser.id
+      }
+      this.$http.post('/api/user/follow/delete',params).then(ref=>{
+        if(ref.data.code===200){
+          this.$message({
+            message:"取消关注成功",
+            type:'success'
+          })
+          this.isFollow=false
+        }else{
+          this.$message({
+            message:"取消关注失败",
+            type:'error'
+          })
+        }
+      })
     }
   }
 }
@@ -199,5 +410,10 @@ export default {
   margin-left: 5px;
   position: relative;
   bottom: 5px
+}
+.focus-box{
+  position: relative;
+  bottom: 80%;
+  margin-left: 90%;
 }
 </style>

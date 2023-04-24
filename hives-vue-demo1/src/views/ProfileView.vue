@@ -51,8 +51,8 @@ import { InfoFilled } from '@element-plus/icons-vue'
               @select="handleSelect"
           >
             <el-menu-item index="/profile" class="menu-item">Hives</el-menu-item>
-            <el-menu-item index="/replies" class="menu-item">Replies</el-menu-item>
             <el-menu-item index="/media" class="menu-item">Media</el-menu-item>
+            <el-menu-item index="/replies" class="menu-item">Replies</el-menu-item>
             <el-menu-item index="/likes">Likes</el-menu-item>
           </el-menu>
         </el-header>
@@ -90,7 +90,6 @@ import { InfoFilled } from '@element-plus/icons-vue'
             </div>
 
 <!--            分页按钮-->
-            <!--              更多内容按钮-->
             <el-pagination
                 class="Page-Menu"
                 v-model:current-page="currentPage"
