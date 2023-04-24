@@ -89,6 +89,11 @@ const router = createRouter({
           name:'OtherProfileView',
           component:OtherProfileView,
         },
+        {
+          path:'/likes',
+          name:'LikesView',
+          component:LikesView,
+        },
       ]
     },
   ]

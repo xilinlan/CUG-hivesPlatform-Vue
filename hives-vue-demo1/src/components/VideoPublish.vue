@@ -1,18 +1,17 @@
 <template>
   <el-upload
-      v-if="!isShow"
+      class="upload-demo"
       v-model:file-list="fileList"
       :action="'http://upload-z2.qiniup.com'"
-      list-type="picture-card"
-      :on-preview="handlePictureCardPreview"
-      :on-remove="handleRemove"
       :on-success="handleSuccess"
-      :limit="1"
       :data="dataObj"
+      accept=".mp4,.mov,.wmv,.flv,.avi,.webm,.mkv,.avchd"
   >
-    <el-icon v-if="!isShow"><Plus /></el-icon>
+    <el-button type="primary">Upload Video</el-button>
   </el-upload>
-  <video :src="dialogImageUrl" class="avatar" controls="controls" v-if="isShow" style="width: 100%"/>
+  <div v-for="item in fileList" style="margin-top: 5px">
+    <video :src="item.url" class="avatar" controls="controls" style="width: 100%"/>
+  </div>
 </template>
 
 <script>
@@ -27,7 +26,6 @@ export default {
       dialogVisible_upload: false,
       dialogImageUrl: "",
       fileList: [],
-      isShow:false,
       actionUrl:'',
       dataObj:{
         token:'',
@@ -35,6 +33,9 @@ export default {
     };
   },
   methods: {
+    initFileList(fileList){
+      this.fileList=fileList
+    },
     handleSuccess(response,file,fileList){
       fileList.pop()
       fileList.push({
@@ -43,15 +44,6 @@ export default {
       })
       this.dialogImageUrl=file.url
       console.log("url",fileList)
-      this.isShow=true
-    },
-    handleRemove(file, fileList) {
-      console.log("file", file);
-      console.log(file, fileList);
-    },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
     },
     getDirAndToken(){
       this.$http.get("/api/third/oss/policy").then(res=>{

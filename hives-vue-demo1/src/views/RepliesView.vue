@@ -1,5 +1,5 @@
 <template>
-<!--  <video v-bind:src="'http://rszvgtifo.hn-bkt.clouddn.com/lg_4FeHKfXpj68hA-QkexUmClTcO'" class="avatar video-avatar" style="width: 50%"/>-->
+<VideoPublish/>
 </template>
 
 <script>
