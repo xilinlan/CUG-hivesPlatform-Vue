@@ -8,9 +8,9 @@ const activeIndex = ref('/home')
 <template>
 <!--  左侧导航栏-->
   <el-row :gutter="0">
-    <el-col :span="19"><div class="grid-content ep-bg-purple">
+    <el-col :span="this.span"><div class="grid-content ep-bg-purple">
       <el-container class="layout-container-demo" >
-        <el-aside width="30%">
+        <el-aside :width="this.asideWidth">
           <el-scrollbar>
             <el-menu @select="MeanClick" class="el-menu-home">
               <SvgIcon name="beeDog" class="logo"/>
@@ -19,11 +19,19 @@ const activeIndex = ref('/home')
               <el-menu-item class="main-menu-item" index="/explore"><el-icon><Search /></el-icon>Explore</el-menu-item>
               <el-menu-item class="main-menu-item" index="/notifications"><el-icon><Bell /></el-icon>Notifications</el-menu-item>
               <el-menu-item class="main-menu-item" index="/message"><el-icon><Message /></el-icon>Message</el-menu-item>
-              <el-menu-item class="main-menu-item" index="5"><el-icon><Star /></el-icon>Bookmarks</el-menu-item>
+              <el-menu-item class="main-menu-item" index="/likes"><el-icon><Star /></el-icon>Bookmarks</el-menu-item>
               <el-menu-item class="main-menu-item" index="6"><el-icon><Promotion /></el-icon>Hive Pro+</el-menu-item>
               <el-menu-item class="main-menu-item" index="/profile"><el-icon><UserFilled /></el-icon>Profile</el-menu-item>
               <el-menu-item class="main-menu-item" index="8"><el-icon><CirclePlus /></el-icon>More Function</el-menu-item>
-              <el-menu-item class="main-menu-item" index="9"><SvgIcon name="bee" class="bee"/>Hive</el-menu-item>
+<!--              <el-menu-item class="main-menu-item" index="9"><SvgIcon name="bee" class="bee"/>Hive</el-menu-item>-->
+              <el-sub-menu index="9">
+                <template #title class="main-menu-item">
+                  <SvgIcon name="bee" class="bee"/>
+                  <span>Hive</span>
+                </template>
+                <el-menu-item class="main-menu-item" index="9-1"><el-icon><Picture /></el-icon>Primary Hive</el-menu-item>
+                <el-menu-item class="main-menu-item" index="9-2"><el-icon><VideoPlay /></el-icon>Video Hive</el-menu-item>
+              </el-sub-menu>
               <el-menu-item class="main-menu-item" index="10"><el-icon><Tools /></el-icon>Set</el-menu-item>
             </el-menu>
           </el-scrollbar>
@@ -89,57 +97,119 @@ const activeIndex = ref('/home')
                 </div>
                 <el-divider/>
               </div>
-<!--              hive内容区-->
-              <div v-for="(item,index) in HivesData" :key="index">
 
-                <el-row :gutter="20">
-                  <el-col :span="4">
-                    <div class="grid-content ep-bg-purple">
-                      <el-popconfirm title="Are you sure to visit profile?" @confirm="visitOtherProfile(item)">
-                        <template #reference>
-                          <img :src="item.header" style="width: 70px; height: 70px;border-radius: 70px">
-                        </template>
-                      </el-popconfirm>
-                    </div>
-                  </el-col>
-                  <el-col :span="20">
-                    <div>
-                      <div>
-                        <a style="font-size: 20px;font-weight: bolder">{{item.nickname}}</a>
-                        <a style="color: #BEBEBE;margin-left: 5px">{{item.email}}</a>
-                        <a style="color: #BEBEBE"> . </a>
-                        <a style="color: #BEBEBE">{{item.updateTime}}</a>
+<!--              hives内容导航栏-->
+              <div style="margin-bottom: 40px;color: #E0E0E0">
+                <span v-if="hivesType===0" style="color: #4682B4">Primary Hives</span>
+                <span v-if="hivesType!==0" @click="changeToPrimaryHives">Primary Hives</span>
+                <el-divider direction="vertical" />
+                <span v-if="hivesType===1" style="color: #4682B4">Video Hives</span>
+                <span v-if="hivesType!==1" @click="changeToVideoHives">Video Hives</span>
+              </div>
+<!--              hive文字图片内容区-->
+              <div v-if="hivesType===0">
+
+                <div v-for="(item,index) in HivesData" :key="index">
+                  <el-row :gutter="20">
+                    <el-col :span="4">
+                      <div class="grid-content ep-bg-purple">
+                        <el-popconfirm title="Are you sure to visit profile?" @confirm="visitOtherProfile(item)">
+                          <template #reference>
+                            <img :src="item.header" style="width: 70px; height: 70px;border-radius: 70px">
+                          </template>
+                        </el-popconfirm>
                       </div>
-                      <p>{{item.content}}</p>
+                    </el-col>
+                    <el-col :span="20">
                       <div>
-                        <ul class="el-upload-list el-upload-list--picture-card">
-                          <li class="el-upload-list__item is-success" v-for="fit in item.urls" :key="fit">
-                            <img style="width: 100%; height: 100%" :src="fit" @click="handlePictureCardPreview(fit)"/>
-                          </li>
-                        </ul>
+                        <div>
+                          <a style="font-size: 20px;font-weight: bolder">{{item.nickname}}</a>
+                          <a style="color: #BEBEBE;margin-left: 5px">{{item.email}}</a>
+                          <a style="color: #BEBEBE"> . </a>
+                          <a style="color: #BEBEBE">{{item.updateTime}}</a>
+                        </div>
+                        <p>{{item.content}}</p>
+                        <div>
+                          <ul class="el-upload-list el-upload-list--picture-card">
+                            <li class="el-upload-list__item is-success" v-for="fit in item.urls" :key="fit">
+                              <img style="width: 100%; height: 100%" :src="fit"/>
+                            </li>
+                          </ul>
+                        </div>
                       </div>
-                    </div>
-                    <div>
-                      <SvgIcon name="love-g" className="Tips-tag" v-if="!item.isLove" @click="LoveClick(index)"/>
-                      <SvgIcon name="love-p" className="Tips-tag" v-if="item.isLove" @click="LoveCancel(index)"/>
-                      <a class="tips_num">{{item.likes}}</a>
-                      <SvgIcon name="comment-g" className="Tips-tag" @click="showCommentDialog(item)"/>
-                      <a class="tips_num">{{item.reply}}</a>
-                      <SvgIcon name="collection-g" className="Tips-tag" v-if="!item.isCollect" @click="CollectClick(index)"/>
-                      <SvgIcon name="collection-y" className="Tips-tag" v-if="item.isCollect" @click="ClickCancel(index)"/>
-                      <a class="tips_num">{{item.collects}}</a>
-                      <SvgIcon name="statistics-g" className="Tips-tag" />
-                      <a class="tips_num">{{item.hot}}</a>
-                      <SvgIcon name="share-g" className="Tips-tag" />
-                    </div>
-                  </el-col>
-                </el-row>
-                <el-divider/>
+                      <div>
+                        <SvgIcon name="love-g" className="Tips-tag" v-if="!item.isLove" @click="LoveClick(index)"/>
+                        <SvgIcon name="love-p" className="Tips-tag" v-if="item.isLove" @click="LoveCancel(index)"/>
+                        <a class="tips_num">{{item.likes}}</a>
+                        <SvgIcon name="comment-g" className="Tips-tag" @click="showCommentDialog(item)"/>
+                        <a class="tips_num">{{item.reply}}</a>
+                        <SvgIcon name="collection-g" className="Tips-tag" v-if="!item.isCollect" @click="CollectClick(index)"/>
+                        <SvgIcon name="collection-y" className="Tips-tag" v-if="item.isCollect" @click="ClickCancel(index)"/>
+                        <a class="tips_num">{{item.collects}}</a>
+                        <SvgIcon name="statistics-g" className="Tips-tag" />
+                        <a class="tips_num">{{item.hot}}</a>
+                        <SvgIcon name="share-g" className="Tips-tag" />
+                      </div>
+                    </el-col>
+                  </el-row>
+                  <el-divider/>
+                </div>
+
               </div>
 
+<!--              hives视频内容区-->
+              <div v-if="hivesType===1">
+
+                <div v-for="(item,index) in HivesData" :key="index">
+                  <el-row :gutter="20">
+                    <el-col :span="4">
+                      <div class="grid-content ep-bg-purple">
+                        <el-popconfirm title="Are you sure to visit profile?" @confirm="visitOtherProfile(item)">
+                          <template #reference>
+                            <img :src="item.header" style="width: 70px; height: 70px;border-radius: 70px">
+                          </template>
+                        </el-popconfirm>
+                      </div>
+                    </el-col>
+                    <el-col :span="20">
+                      <div>
+                        <div>
+                          <a style="font-size: 20px;font-weight: bolder">{{item.nickname}}</a>
+                          <a style="color: #BEBEBE;margin-left: 5px">{{item.email}}</a>
+                          <a style="color: #BEBEBE"> . </a>
+                          <a style="color: #BEBEBE">{{item.updateTime}}</a>
+                        </div>
+                        <p>{{item.content}}</p>
+                        <div>
+                          <ul class="el-upload-list el-upload-list--picture-card">
+                            <li class="el-upload-list__item is-success" v-for="fit in item.urls" :key="fit">
+                              hhh
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div>
+                        <SvgIcon name="love-g" className="Tips-tag" v-if="!item.isLove" @click="LoveClick(index)"/>
+                        <SvgIcon name="love-p" className="Tips-tag" v-if="item.isLove" @click="LoveCancel(index)"/>
+                        <a class="tips_num">{{item.likes}}</a>
+                        <SvgIcon name="comment-g" className="Tips-tag" @click="showCommentDialog(item)"/>
+                        <a class="tips_num">{{item.reply}}</a>
+                        <SvgIcon name="collection-g" className="Tips-tag" v-if="!item.isCollect" @click="CollectClick(index)"/>
+                        <SvgIcon name="collection-y" className="Tips-tag" v-if="item.isCollect" @click="ClickCancel(index)"/>
+                        <a class="tips_num">{{item.collects}}</a>
+                        <SvgIcon name="statistics-g" className="Tips-tag" />
+                        <a class="tips_num">{{item.hot}}</a>
+                        <SvgIcon name="share-g" className="Tips-tag" />
+                      </div>
+                    </el-col>
+                  </el-row>
+                  <el-divider/>
+                </div>
+
+              </div>
 <!--              更多内容按钮-->
               <el-pagination
-                  class="Page-Menu"
+                  class="Hives-Type-Menu"
                   v-model:current-page="currentPage"
                   layout="prev, pager, next"
                   :total="totalCount"
@@ -156,7 +226,8 @@ const activeIndex = ref('/home')
 
 
 <!--    右侧搜索栏-->
-    <el-col :span="5"><div class="grid-content ep-bg-purple" id="search_div">
+    <el-col :span="5" v-if="this.$router.currentRoute.value.path!=='/message'">
+      <div class="grid-content ep-bg-purple" id="search_div">
       <el-aside width="100%" style="text-align: center">
         <el-scrollbar>
           <div>
@@ -188,8 +259,9 @@ const activeIndex = ref('/home')
 <!--  hives发布对话框-->
   <el-dialog
       v-model="dialogVisible"
-      title="Tips"
+      title="Hives"
       width="37%"
+      @close="handleDialogClose"
   >
     <el-input v-model="contentInput" placeholder="Please input" :type="'textarea'" :rows="10"/>
     <div style="margin-top: 10px;margin-left: 10px">
@@ -198,8 +270,76 @@ const activeIndex = ref('/home')
     <el-button round class="Hive-button" @click="HiveButtonClick">Hive</el-button>
   </el-dialog>
 
+<!--  videoHive发布对话框-->
+  <el-dialog
+      v-model="videoDialogVisible"
+      title="Hives"
+      width="37%"
+      @close="handleVideoDialogClose"
+  >
+    <el-input v-model="videoContentInput" placeholder="Please input" :type="'textarea'" :rows="10"/>
+    <div style="margin-top: 10px;margin-left: 10px">
+      <VideoPublish ref="hivesMenuVideoUpload"/>
+    </div>
+    <el-button round class="Hive-button" @click="HiveVideoButtonClick">Hive</el-button>
+  </el-dialog>
   <!--  评论对话框-->
   <CommentDialog ref="commentDialog"/>
+
+<!--  hive会员选择框-->
+  <el-dialog
+      v-model="hiveProDialogVisible"
+      width="37%"
+      class="Hive-Pro-Dialog"
+      :destroy-on-close="true"
+      :show-close="false"
+  >
+    <template #header="{ close, titleId, titleClass }">
+      <div class="my-header" style="font-weight: bolder;font-size: 50px;height: 50px;width: 100%;">
+        <el-icon @click="closeHiveProDialog"><CloseBold /></el-icon>
+        <a style="position: relative;left: 25%;bottom: 10%">Hive Pro+</a>
+      </div>
+    </template>
+    <el-divider style="position: relative;bottom: 30px"/>
+    <div>
+      <el-row>
+        <el-col :span="16"><a style="font-size: 30px;font-weight: bolder;color: black">Hive subscribers with a verified phone number will get a yellow checkmark once approved</a></el-col>
+        <el-col :span="8"> <SvgIcon name="rocket" /></el-col>
+      </el-row>
+    </div>
+    <div style="margin-top: 50px">
+      <el-row>
+        <el-col :span="5"><SvgIcon name="gift" style="position: relative;right: 60%;bottom: 10%"/></el-col>
+        <el-col :span="19">
+          <div style="font-size: 30px;font-weight: bolder;color: black">All the existing Yellow features</div>
+          <a style="font-size: 20px">Edit Hive,1080p video uploads,Reader,custom navigation,Bookmark Folders,Top Articles and more</a>
+        </el-col>
+      </el-row>
+    </div>
+    <div style="margin-left: 11%;margin-top: 50px">
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <div class="Pro-chose-box" :style="annualPlanChosen?'border-color:#FFD103;  border-style: solid;' : 'border-color:#8e9292;'" @click="AnnualPlanClick">
+            <div style="position: relative;top:10%;left:10%">
+              <div>Annual Plan</div>
+              <div style="font-size: 20px;font-weight: bolder">￥25/month</div>
+              <div style="width: 80%;">￥300 per year billed annually</div>
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <div class="Pro-chose-box" :style="!annualPlanChosen?'border-color:#FFD103;  border-style: solid;' : 'border-color:#8e9292;'" @click="MonthlyPlanClick">
+            <div style="position: relative;top:10%;left:10%">
+              <div>Monthly Plan</div>
+              <div style="font-size: 20px;font-weight: bolder">￥30/month</div>
+              <div style="width: 80%;">￥360 per year billed annually</div>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+    <el-button class="Subscribe-Button" @click="subscribeButtonClick">Subscribe</el-button>
+  </el-dialog>
 </template>
 
 <script>
@@ -209,6 +349,7 @@ import CommentDialog from "../components/CommentDialog.vue";
 import HivesPublish from "../components/HivesPublish.vue";
 import '../assets/font/font.css'
 import emotion from "../components/emotion.vue";
+import VideoPublish from "../components/VideoPublish.vue";
 
 export default {
   mounted() {
@@ -221,28 +362,21 @@ export default {
   components:{
     CommentDialog,
     HivesPublish,
-    emotion
-  },
-  watch: {
-    $route() {
-      if(this.$router.currentRoute.value.path==='/home'||
-          this.$router.currentRoute.value.path==='/explore'||
-          this.$router.currentRoute.value.path==='/notifications'||
-          this.$router.currentRoute.value.path==='/message'||
-          this.$router.currentRoute.value.path==='/profile'){
-        location.reload();
-      }
-
-    },
+    emotion,
+    VideoPublish,
   },
   data(){
     return{
+      span:19,
+      asideWidth:'30%',
       emojiHowVisible:false,
       user:{},
       userImageUrl:'',
       contentInput:'',
       contentInput2:'',
+      videoContentInput:'',
       dialogVisible : false,
+      videoDialogVisible:false,
       searchInput:'',
       hivesUpload:false,
       dialogVisibleForYouUpload:false,
@@ -286,6 +420,9 @@ export default {
       HivesData : [],
       totalCount:0,
       currentPage:1,
+      hivesType:0,
+      hiveProDialogVisible:false,
+      annualPlanChosen:true
     }
   },
   methods: {
@@ -309,11 +446,27 @@ export default {
       })
     },
     MeanClick(index){
-      if(index!=="9"){
+      if(index!=="9"&&index!=="9-1"&&index!=="9-2"){
+        if(index==="/message"){
+          this.span=24
+          this.asideWidth='20%'
+        }else{
+          this.span=19
+          this.asideWidth='30%'
+        }
+        if(index==="6"){
+          this.hiveProDialogVisible=true
+          return
+        }
         this.$router.push(index);
       }
       else{
-        this.dialogVisible=true;
+        if(index==="9-1"){
+          this.dialogVisible=true;
+        }else{
+          this.videoDialogVisible=true
+        }
+
       }
     },
     HiveButtonClick(){
@@ -448,6 +601,39 @@ export default {
     visitOtherProfile(item){
       console.log(item)
       this.$router.push({path: '/other-profile',query:{ userId:item.userId}});
+    },
+    handleDialogClose(){
+      this.contentInput=''
+      this.$refs.hivesMenuPublish.initHiveList([])
+    },
+    handleVideoDialogClose(){
+      this.videoContentInput=''
+      this.$refs.hivesMenuVideoUpload.initFileList([])
+    },
+    changeToPrimaryHives(){
+      this.hivesType=0
+    },
+    changeToVideoHives(){
+      this.hivesType=1
+    },
+    HiveVideoButtonClick(){
+      //toDo
+      //上传视频
+    },
+    AnnualPlanClick(){
+      this.annualPlanChosen=true
+      console.log("ceshi1ceshi1")
+    },
+    MonthlyPlanClick(){
+      this.annualPlanChosen=false
+    },
+    closeHiveProDialog(){
+      this.hiveProDialogVisible=false
+    },
+    subscribeButtonClick(){
+      this.hiveProDialogVisible=false
+      //TODO
+      //订阅会员服务
     }
   }
 }
@@ -579,6 +765,25 @@ export default {
   justify-content: center;
   align-items: center;
   margin: auto;
+}
+.Pro-chose-box{
+  width: 200px;
+  height: 100px;
+  border-radius: 30px;
+  box-shadow: 0 5px 10px #606060;
+  border-color: #FFD103;
+  border-width: 2px;
+}
+.Subscribe-Button{
+  width: 40%;
+  margin-top: 5%;
+  margin-left: 29%;
+  border-radius: 50px;
+  height: 50px;
+  color: white;
+  font-weight: bolder;
+  font-size: 20px;
+  background-color: black;
 }
 </style>
 
