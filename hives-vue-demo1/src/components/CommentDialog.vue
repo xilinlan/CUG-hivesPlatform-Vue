@@ -187,6 +187,21 @@ export default {
             type: 'success'
           })
           this.commentInput=''
+          let params={
+            "postId":this.hivesID
+          }
+          this.$http.get('/api/exchange/reply/firstLevelComments?',{params}).then(ref=>{
+            if(ref.data.code===200){
+              this.commentList=ref.data.data
+              console.log('comment',ref)
+            }
+            else {
+              this.$message({
+                message: ref.data.msg,
+                type: 'error'
+              })
+            }
+          })
         }
         else{
           this.$message({
