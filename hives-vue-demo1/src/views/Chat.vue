@@ -30,7 +30,12 @@ export default {
     set(user) {
       this.contact = user
       this.$http.post('/pullMsg', {from: JSON.parse(localStorage.getItem('user')).id, to: this.contact.id}).then(res => {
-        this.msgList = res.data.data
+        //将str转换为json对象
+        for (let i = 0; i < res.data.length; i++) {
+          res.data[i].content = JSON.parse(res.data[i].content)
+        }
+
+        this.msgList = res.data
       }).catch(err => {
         console.log(err)
       })
