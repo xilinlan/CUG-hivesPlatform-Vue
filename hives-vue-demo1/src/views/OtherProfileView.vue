@@ -323,6 +323,7 @@ export default {
             type:'success'
           })
           this.isFollow=true
+          this.otherUser.fansCount=this.otherUser.fansCount+1
         }else{
           this.$message({
             message:"关注失败",
@@ -346,6 +347,7 @@ export default {
             type:'success'
           })
           this.isFollow=false
+          this.otherUser.fansCount=this.otherUser.fansCount-1
         }else{
           this.$message({
             message:"取消关注失败",

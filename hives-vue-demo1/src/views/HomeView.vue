@@ -297,26 +297,28 @@ const activeIndex = ref('/home')
     <template #header="{ close, titleId, titleClass }">
       <div class="my-header" style="font-weight: bolder;font-size: 50px;height: 50px;width: 100%;">
         <el-icon @click="closeHiveProDialog"><CloseBold /></el-icon>
-        <a style="position: relative;left: 25%;bottom: 10%">Hive Pro+</a>
+        <a style="position: relative;left: 18%;bottom: 10%">Hive Pro+</a>
       </div>
     </template>
     <el-divider style="position: relative;bottom: 30px"/>
     <div>
       <el-row>
         <el-col :span="16"><a style="font-size: 30px;font-weight: bolder;color: black">Hive subscribers with a verified phone number will get a yellow checkmark once approved</a></el-col>
-        <el-col :span="8"> <SvgIcon name="rocket" /></el-col>
+        <el-col :span="8" > <SvgIcon name="rocket" style="position: relative;right: 50%;top:20%"/></el-col>
       </el-row>
     </div>
     <div style="margin-top: 50px">
       <el-row>
-        <el-col :span="5"><SvgIcon name="gift" style="position: relative;right: 60%;bottom: 10%"/></el-col>
+        <el-col :span="5"><SvgIcon name="gift" style="position: relative;right: 60%"/></el-col>
         <el-col :span="19">
-          <div style="font-size: 30px;font-weight: bolder;color: black">All the existing Yellow features</div>
-          <a style="font-size: 20px">Edit Hive,1080p video uploads,Reader,custom navigation,Bookmark Folders,Top Articles and more</a>
+          <div style="width: 70%;margin-left: 20%">
+            <div style="font-size: 30px;font-weight: bolder;color: black">All the existing Yellow features</div>
+            <a style="font-size: 20px">Edit Hive,1080p video uploads,Reader,custom navigation,Bookmark Folders,Top Articles and more</a>
+          </div>
         </el-col>
       </el-row>
     </div>
-    <div style="margin-left: 11%;margin-top: 50px">
+    <div style="margin-left: 9%;margin-top: 50px">
       <el-row :gutter="20">
         <el-col :span="12">
           <div class="Pro-chose-box" :style="annualPlanChosen?'border-color:#FFD103;  border-style: solid;' : 'border-color:#8e9292;'" @click="AnnualPlanClick">
