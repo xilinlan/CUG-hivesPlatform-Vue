@@ -10,7 +10,7 @@ const activeIndex = ref('/home')
   <el-row :gutter="0">
     <el-col :span="this.$router.currentRoute.value.path==='/message'?24:19"><div class="grid-content ep-bg-purple">
       <el-container class="layout-container-demo" >
-        <el-aside :width="'30%'">
+        <el-aside :width="this.$router.currentRoute.value.path==='/message'?'23.5%':'30%'">
           <el-scrollbar>
             <el-menu @select="MeanClick" class="el-menu-home">
               <SvgIcon name="beeDog" class="logo"/>
@@ -284,7 +284,7 @@ const activeIndex = ref('/home')
     <el-button round class="Hive-button" @click="HiveVideoButtonClick">Hive</el-button>
   </el-dialog>
   <!--  评论对话框-->
-  <CommentDialog ref="commentDialog"/>
+  <CommentDialog ref="commentDialog" @updateComment="updatePage"/>
 
 <!--  hive会员选择框-->
   <el-dialog
@@ -426,6 +426,9 @@ export default {
     }
   },
   methods: {
+    updatePage(page){
+      this.initHivesShow()
+    },
     initHivesShow(){
       let params={
         page:this.currentPage,
@@ -477,7 +480,7 @@ export default {
         "content": this.contentInput.toString(),
         "userId": this.user.id,
         "nickname": this.user.nickname,
-        "type":'',
+        "type":0,
         "urls": urlList
       }
       console.log('params',params)
@@ -485,11 +488,11 @@ export default {
       //发布新的hive
       this.$http.post("/api/exchange/post/save",params).then(res=>{
         console.log("result",res.msg)
+        this.initHivesShow()
       })
       this.$refs.hivesMenuPublish.initHiveList([])
       this.contentInput=''
       this.dialogVisible=false
-      this.reload()
 
     },
     HiveButtonClick2(){
@@ -506,23 +509,22 @@ export default {
         "content": this.contentInput2.toString(),
         "userId": this.user.id,
         "nickname": this.user.nickname,
-        "type":'',
+        "type":0,
         urls: urlList
       }
       // console.log('content:'+hivetmp.content)
       //发布新的hive
       this.$http.post("/api/exchange/post/save",params).then(res=>{
         console.log("result",res.msg)
+        this.initHivesShow()
       })
       this.contentInput2=''
       this.$refs.hiveForYouPublish.initHiveList([])
       this.dialogVisibleForYouUpload=false
-      this.reload()
     },
     LoveClick(index){
       this.HivesData[index].isLove=true
       this.HivesData[index].likes=this.HivesData[index].likes+1
-      //toDo
       //点赞
       let params={
         "userId":this.user.id,
@@ -583,7 +585,7 @@ export default {
       this.$refs.commentDialog.showDialog(hive)
     },
     PictureClick(){
-      this.dialogVisibleForYouUpload=true
+      this.dialogVisibleForYouUpload=!this.dialogVisibleForYouUpload
     },
     chooseEmojiDefault(e){
       this.contentInput2 += e

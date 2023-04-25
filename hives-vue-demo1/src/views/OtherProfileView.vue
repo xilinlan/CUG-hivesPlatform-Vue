@@ -19,7 +19,7 @@
           <a style="margin-left: 5px">Followers</a>
         </div>
       </div>
-      <div class="focus-box">
+      <div class="focus-box" v-if="this.user.id!==this.otherUser.id">
         <el-button style="  background-color: #FFD103;width: 100px;height: 40px;color: white" round v-if="!isFollow" @click="focusButtonClick"><el-icon><CirclePlus /></el-icon>关注</el-button>
         <el-button style="  background-color: #EEE7E7;width: 100px;height: 40px;color: #808080" round v-if="isFollow" @click="cancelFocusButtonClick"><el-icon><CircleCheck /></el-icon>已关注</el-button>
       </div>
@@ -310,7 +310,6 @@ export default {
       this.$refs.commentDialog.showDialog(id)
     },
     focusButtonClick(){
-
       //toDo
       //关注用户
       let params={
