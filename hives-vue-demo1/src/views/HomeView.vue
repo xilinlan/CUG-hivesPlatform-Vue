@@ -8,9 +8,9 @@ const activeIndex = ref('/home')
 <template>
 <!--  左侧导航栏-->
   <el-row :gutter="0">
-    <el-col :span="this.span"><div class="grid-content ep-bg-purple">
+    <el-col :span="this.$router.currentRoute.value.path==='/message'?24:19"><div class="grid-content ep-bg-purple">
       <el-container class="layout-container-demo" >
-        <el-aside :width="this.asideWidth">
+        <el-aside :width="'30%'">
           <el-scrollbar>
             <el-menu @select="MeanClick" class="el-menu-home">
               <SvgIcon name="beeDog" class="logo"/>
@@ -447,13 +447,6 @@ export default {
     },
     MeanClick(index){
       if(index!=="9"&&index!=="9-1"&&index!=="9-2"){
-        if(index==="/message"){
-          this.span=24
-          this.asideWidth='20%'
-        }else{
-          this.span=19
-          this.asideWidth='30%'
-        }
         if(index==="6"){
           this.hiveProDialogVisible=true
           return
