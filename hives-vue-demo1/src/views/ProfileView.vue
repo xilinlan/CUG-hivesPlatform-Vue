@@ -247,10 +247,9 @@ export default {
         header:this.$refs.userImageChange.fileList[0].url,
         background:this.$refs.groundImageChange.fileList[0].url
       }
-      this.$http.post('api/user/user/update',profile).then(res=>{
+      this.$http.post('api/user/user/updatePersonal',profile).then(res=>{
         console.log(res)
         if(res.data.code===200){
-
           let user = sessionStorage.getItem("user");
           if (user != null) {
             // 将JSON格式的对象解析为js对象，currentUser为一个js对象
@@ -261,10 +260,8 @@ export default {
             currentUser.birthday=this.birthday
             currentUser.header=this.userImageUrl
             currentUser.background=this.backImageUrl
-
             window.sessionStorage.setItem('user',JSON.stringify(currentUser))
           }
-
           this.$message({
             message: '修改成功',
             type: 'success'
