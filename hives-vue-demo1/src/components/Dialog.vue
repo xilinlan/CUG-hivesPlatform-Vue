@@ -159,7 +159,7 @@ export default {
       this.msgList.push(entity)
       this.msg = ''
       this.hint = ''
-      this.emojiHowVisible = !this.emojiHowVisible
+      this.emojiHowVisible = false
     },
     emojiShow(){
       this.emojiHowVisible = !this.emojiHowVisible
@@ -181,8 +181,8 @@ export default {
 }
 .name {
   position: relative;
-  bottom: 10px;
-  left: 25px;
+  bottom: 5%;
+  left: 5%;
   font-weight: bolder;
   font-size: 30px;
 }
