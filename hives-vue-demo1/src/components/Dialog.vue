@@ -159,7 +159,7 @@ export default {
       this.msgList.push(entity)
       this.msg = ''
       this.hint = ''
-      this.emojiHowVisible = !this.emojiHowVisible
+      this.emojiHowVisible = false
     },
     emojiShow(){
       this.emojiHowVisible = !this.emojiHowVisible
