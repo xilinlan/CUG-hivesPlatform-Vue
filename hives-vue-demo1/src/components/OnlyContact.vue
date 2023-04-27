@@ -1,13 +1,6 @@
 <template>
   <div class="contact">
-    <div class="top">
-      <div class="left">
-        <img class="avatar" :src=user.header alt=""/>
-      </div>
-      <div class="right">
-        {{ user.nickname }}
-      </div>
-    </div>
+    <el-divider><a style="font-weight: bolder">{{this.name}}</a></el-divider>
     <div v-if="friendList.length" class="bottom">
       <div v-for="(friend, i) in friendList" class="friend" :class="{activeColor: isActive(i)}" @click="setContact(i)">
         <div class="left">
@@ -20,7 +13,7 @@
     </div>
     <div v-else class="info">
       <div class="msg">
-        还没有好友~~~
+        还没有{{this.name}}~~~
       </div>
     </div>
   </div>
@@ -36,26 +29,27 @@ export default {
       user:{},
       active: -1,
       friendList: [],
+      name:'',
     }
   },
   mounted() {
     this.user=JSON.parse(window.sessionStorage.getItem('user'))
     console.log(this.user)
     // 界面渲染时获取用户的好友列表并展示
-    let params={
-      "userId": this.user.id
-    }
-    this.$http.get('/api/user/follow/getFollows?',{params}).then(res => {
-      console.log(res)
-      for(let item in res.data.follow)
-      {
-        this.friendList.push(res.data.follow[item])
-      }
-      // this.friendList = res.data.follow
-      console.log("friendList",this.friendList)
-    }).catch(err => {
-      console.log(err)
-    })
+    // let params={
+    //   "userId": this.user.id
+    // }
+    // this.$http.get('/api/user/follow/getFollows?',{params}).then(res => {
+    //   console.log(res)
+    //   for(let item in res.data.follow)
+    //   {
+    //     this.friendList.push(res.data.follow[item])
+    //   }
+    //   // this.friendList = res.data.follow
+    //   console.log("friendList",this.friendList)
+    // }).catch(err => {
+    //   console.log(err)
+    // })
   },
   computed: {
     user() {
@@ -126,7 +120,7 @@ export default {
   height: 36px;
 }
 .info {
-  margin-top: 230px;
+  margin-top: 10%;
 }
 .info .msg {
   text-align: center;

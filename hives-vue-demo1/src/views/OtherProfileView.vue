@@ -19,6 +19,7 @@
           <a style="margin-left: 5px">Followers</a>
         </div>
       </div>
+      <el-button class="message-box" v-if="this.user.id!==this.otherUser.id&&!isFollow" style="  background-color: #51a5e6;width: 70px;;color: white" round @click="messageToOtherUser">私信</el-button>
       <div class="focus-box" v-if="this.user.id!==this.otherUser.id">
         <el-button style="  background-color: #FFD103;width: 100px;height: 40px;color: white" round v-if="!isFollow" @click="focusButtonClick"><el-icon><CirclePlus /></el-icon>关注</el-button>
         <el-button style="  background-color: #EEE7E7;width: 100px;height: 40px;color: #808080" round v-if="isFollow" @click="cancelFocusButtonClick"><el-icon><CircleCheck /></el-icon>已关注</el-button>
@@ -100,12 +101,17 @@
                             <a style="color: #BEBEBE">{{item.updateTime}}</a>
                           </div>
                           <p>{{item.content}}</p>
-                          <div>
+                          <div v-if="item.type===0">
                             <ul class="el-upload-list el-upload-list--picture-card">
                               <li class="el-upload-list__item is-success" v-for="fit in item.urls" :key="fit">
                                 <img style="width: 100%; height: 100%" :src="fit" @click="handlePictureCardPreview(fit)"/>
                               </li>
                             </ul>
+                          </div>
+                          <div v-if="item.type===1">
+                            <div v-for="fit in item.urls">
+                              <video :src=fit class="avatar" controls="controls" style="width: 100%;height: 50%"/>
+                            </div>
                           </div>
                         </div>
                         <div>
@@ -324,6 +330,11 @@ export default {
           })
           this.isFollow=true
           this.otherUser.fansCount=this.otherUser.fansCount+1
+          this.$http.get('/api/user/user/info/'+this.user.id).then(res=>{
+            this.user=res.data.user
+            sessionStorage.removeItem("user");
+            window.sessionStorage.setItem('user',JSON.stringify(this.user))
+          })
         }else{
           this.$message({
             message:"关注失败",
@@ -348,6 +359,11 @@ export default {
           })
           this.isFollow=false
           this.otherUser.fansCount=this.otherUser.fansCount-1
+          this.$http.get('/api/user/user/info/'+this.user.id).then(res=>{
+            this.user=res.data.user
+            sessionStorage.removeItem("user");
+            window.sessionStorage.setItem('user',JSON.stringify(this.user))
+          })
         }else{
           this.$message({
             message:"取消关注失败",
@@ -355,6 +371,10 @@ export default {
           })
         }
       })
+    },
+
+    messageToOtherUser(){
+      this.$router.push({path: '/message',query:{ otherUser:JSON.stringify(this.otherUser)}});
     }
   }
 }
@@ -416,5 +436,10 @@ export default {
   position: relative;
   bottom: 80%;
   margin-left: 90%;
+}
+.message-box{
+  position: relative;
+  bottom: 70%;
+  margin-left: 80%;
 }
 </style>

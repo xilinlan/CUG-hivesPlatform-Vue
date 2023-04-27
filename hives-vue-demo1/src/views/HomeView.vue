@@ -17,6 +17,7 @@ const activeIndex = ref('/home')
               <a class="logoTittle">Hives Platform</a>
               <el-menu-item class="main-menu-item" index="/home"><el-icon><Monitor /></el-icon>Home</el-menu-item>
               <el-menu-item class="main-menu-item" index="/explore"><el-icon><Search /></el-icon>Explore</el-menu-item>
+              <el-menu-item class="main-menu-item" index="/friends"><el-icon><User /></el-icon>Friends</el-menu-item>
               <el-menu-item class="main-menu-item" index="/notifications"><el-icon><Bell /></el-icon>Notifications</el-menu-item>
               <el-menu-item class="main-menu-item" index="/message"><el-icon><Message /></el-icon>Message</el-menu-item>
               <el-menu-item class="main-menu-item" index="/likes"><el-icon><Star /></el-icon>Bookmarks</el-menu-item>
@@ -98,16 +99,8 @@ const activeIndex = ref('/home')
                 <el-divider/>
               </div>
 
-<!--              hives内容导航栏-->
-              <div style="margin-bottom: 40px;color: #E0E0E0">
-                <span v-if="hivesType===0" style="color: #4682B4">Primary Hives</span>
-                <span v-if="hivesType!==0" @click="changeToPrimaryHives">Primary Hives</span>
-                <el-divider direction="vertical" />
-                <span v-if="hivesType===1" style="color: #4682B4">Video Hives</span>
-                <span v-if="hivesType!==1" @click="changeToVideoHives">Video Hives</span>
-              </div>
-<!--              hive文字图片内容区-->
-              <div v-if="hivesType===0">
+
+              <div>
 
                 <div v-for="(item,index) in HivesData" :key="index">
                   <el-row :gutter="20">
@@ -129,63 +122,17 @@ const activeIndex = ref('/home')
                           <a style="color: #BEBEBE">{{item.updateTime}}</a>
                         </div>
                         <p>{{item.content}}</p>
-                        <div>
+                        <div v-if="item.type===0">
                           <ul class="el-upload-list el-upload-list--picture-card">
                             <li class="el-upload-list__item is-success" v-for="fit in item.urls" :key="fit">
                               <img style="width: 100%; height: 100%" :src="fit"/>
                             </li>
                           </ul>
                         </div>
-                      </div>
-                      <div>
-                        <SvgIcon name="love-g" className="Tips-tag" v-if="!item.isLove" @click="LoveClick(index)"/>
-                        <SvgIcon name="love-p" className="Tips-tag" v-if="item.isLove" @click="LoveCancel(index)"/>
-                        <a class="tips_num">{{item.likes}}</a>
-                        <SvgIcon name="comment-g" className="Tips-tag" @click="showCommentDialog(item)"/>
-                        <a class="tips_num">{{item.reply}}</a>
-                        <SvgIcon name="collection-g" className="Tips-tag" v-if="!item.isCollect" @click="CollectClick(index)"/>
-                        <SvgIcon name="collection-y" className="Tips-tag" v-if="item.isCollect" @click="ClickCancel(index)"/>
-                        <a class="tips_num">{{item.collects}}</a>
-                        <SvgIcon name="statistics-g" className="Tips-tag" />
-                        <a class="tips_num">{{item.hot}}</a>
-                        <SvgIcon name="share-g" className="Tips-tag" />
-                      </div>
-                    </el-col>
-                  </el-row>
-                  <el-divider/>
-                </div>
-
-              </div>
-
-<!--              hives视频内容区-->
-              <div v-if="hivesType===1">
-
-                <div v-for="(item,index) in HivesData" :key="index">
-                  <el-row :gutter="20">
-                    <el-col :span="4">
-                      <div class="grid-content ep-bg-purple">
-                        <el-popconfirm title="Are you sure to visit profile?" @confirm="visitOtherProfile(item)">
-                          <template #reference>
-                            <img :src="item.header" style="width: 70px; height: 70px;border-radius: 70px">
-                          </template>
-                        </el-popconfirm>
-                      </div>
-                    </el-col>
-                    <el-col :span="20">
-                      <div>
-                        <div>
-                          <a style="font-size: 20px;font-weight: bolder">{{item.nickname}}</a>
-                          <a style="color: #BEBEBE;margin-left: 5px">{{item.email}}</a>
-                          <a style="color: #BEBEBE"> . </a>
-                          <a style="color: #BEBEBE">{{item.updateTime}}</a>
-                        </div>
-                        <p>{{item.content}}</p>
-                        <div>
-                          <ul class="el-upload-list el-upload-list--picture-card">
-                            <li class="el-upload-list__item is-success" v-for="fit in item.urls" :key="fit">
-                              hhh
-                            </li>
-                          </ul>
+                        <div v-if="item.type===1">
+                          <div v-for="fit in item.urls">
+                            <video :src=fit class="avatar" controls="controls" style="width: 100%;height: 50%"/>
+                          </div>
                         </div>
                       </div>
                       <div>
@@ -205,19 +152,19 @@ const activeIndex = ref('/home')
                   </el-row>
                   <el-divider/>
                 </div>
+                <!--              更多内容按钮-->
+                <el-pagination
+                    class="Hives-Type-Menu"
+                    v-model:current-page="currentPage"
+                    layout="prev, pager, next"
+                    :total="totalCount"
+                    @current-change="initHivesShow" />
 
               </div>
-<!--              更多内容按钮-->
-              <el-pagination
-                  class="Hives-Type-Menu"
-                  v-model:current-page="currentPage"
-                  layout="prev, pager, next"
-                  :total="totalCount"
-                  @current-change="initHivesShow" />
+
+
+
             </div>
-
-
-
           </el-main>
         </el-container>
       </el-container>
@@ -607,15 +554,37 @@ export default {
       this.videoContentInput=''
       this.$refs.hivesMenuVideoUpload.initFileList([])
     },
-    changeToPrimaryHives(){
-      this.hivesType=0
-    },
-    changeToVideoHives(){
-      this.hivesType=1
-    },
     HiveVideoButtonClick(){
       //toDo
       //上传视频
+
+      // 用户上传的图片
+      let urlList = []
+      if(this.$refs.hivesMenuVideoUpload!==undefined){
+        let videoUplod = this.$refs.hivesMenuVideoUpload
+        console.log(videoUplod)
+        for( let item in videoUplod.fileList){
+          urlList.push(videoUplod.fileList[item].url)
+        }
+      }
+      //用户输入的内容
+      let params = {
+        "content": this.videoContentInput.toString(),
+        "userId": this.user.id,
+        "nickname": this.user.nickname,
+        "type":1,
+        "urls": urlList
+      }
+      console.log('params',params)
+      console.log('urlList',urlList)
+      //发布新的hive
+      this.$http.post("/api/exchange/post/save",params).then(res=>{
+        console.log("result",res.msg)
+        this.initHivesShow()
+      })
+      this.$refs.hivesMenuVideoUpload.initFileList([])
+      this.videoContentInput=''
+      this.videoDialogVisible=false
     },
     AnnualPlanClick(){
       this.annualPlanChosen=true
