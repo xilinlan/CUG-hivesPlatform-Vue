@@ -5,7 +5,6 @@
       v-model="dialogVisible"
       title="COMMENT"
       width="40%"
-      :before-close="handleClose"
   >
 <!--    评论顶部输入区域-->
     <div class="comment-input-box">
@@ -194,6 +193,7 @@ export default {
             if(ref.data.code===200){
               this.commentList=ref.data.data
               console.log('comment',ref)
+              this.$emit('updateComment',1)
             }
             else {
               this.$message({
@@ -266,6 +266,7 @@ export default {
           if(ref.data.code===200){
             this.commentList=ref.data.data
             console.log('reply_comment',ref)
+            this.$emit('updateComment',1)
           }
           else {
             this.$message({
@@ -297,6 +298,7 @@ export default {
           if(ref.data.code===200){
             this.commentList=ref.data.data
             console.log('reply_comment',ref)
+            this.$emit('updateComment',1)
           }
           else {
             this.$message({

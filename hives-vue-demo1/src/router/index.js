@@ -10,6 +10,7 @@ import LikesView from "../views/LikesView.vue";
 import LoginPage from "../views/LoginPage.vue";
 import MessageView from "../views/MessageView.vue";
 import OtherProfileView from "../views/OtherProfileView.vue";
+import FriendsView from "../views/FriendsView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,6 +19,16 @@ const router = createRouter({
       path: '/',
       name: 'LoginPage',
       component: LoginPage
+    },
+    {
+      path:'/chat',
+      name:'chat',
+      component:() => import('../views/ChatView.vue')
+    },
+    {
+      path:'/chat2',
+      name:'chat2',
+      component:() => import('../views/Chat.vue')
     },
     {
       path: '/about',
@@ -80,10 +91,10 @@ const router = createRouter({
           component:OtherProfileView,
         },
         {
-          path:'/likes',
-          name:'LikesView',
-          component:LikesView,
-        },
+          path:'/friends',
+          name:'FriendsView',
+          component:FriendsView,
+        }
       ]
     },
   ]

@@ -1,7 +1,9 @@
 <template>
-  <div v-for="item in name">
-    {{item}}
-  </div>
+  <el-input style="width:80%;display: inline-block;" v-model="search_data" placeholder="请输入搜索的关键字">
+    <template slot="append">
+      <el-button type="primary" plain @click="">查找</el-button>
+    </template>
+  </el-input>
 
 
 </template>
