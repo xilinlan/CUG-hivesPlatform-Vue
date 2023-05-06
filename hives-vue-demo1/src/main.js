@@ -12,15 +12,20 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'virtual:svg-icons-register';
 import svgIcon from './components/svgIcon.vue';
 import CommentDialog from "./components/CommentDialog.vue";
+import VueClipboard from 'vue-clipboard2'
 
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
-axios.defaults.baseURL = 'http://localhost:88/'
-
-app.config.globalProperties.$http=axios
-
+// axios.defaults.baseURL = 'http://localhost:88/'
+const service = axios.create({
+    baseURL: '/api',
+    timeout: 5000
+})
+// //
+app.config.globalProperties.$http=service
+app.use(VueClipboard)
 app.use(createPinia())
 app.use(router)
 app.use(ElementPlus)

@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import {createSvgIconsPlugin} from "vite-plugin-svg-icons";
 import path from 'path';
+import axios from "axios";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -20,8 +21,14 @@ export default defineConfig({
     }
   },
   server: { //主要是加上这段代码
-    hmr: true,
-    host: '127.0.0.1',
-    port: 3000
+    open: true,//启动项目自动弹出浏览器
+    port: 3000,//启动端口
+    proxy: {
+      '/api': {
+        target: 'http://localhost:88',	//实际请求地址
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      },
+    }
   },
  })
