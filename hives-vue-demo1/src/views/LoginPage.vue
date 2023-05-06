@@ -43,6 +43,7 @@ import SvgIcon from "../components/svgIcon.vue";
 import {Right} from "@element-plus/icons-vue";
 import RegisterDialog from "../components/RegisterDialog.vue";
 import ForgetPasswordPage from "../components/ForgetPasswordPage.vue";
+import axios from "axios";
 
 export default {
   name: "LoginPage",
@@ -82,22 +83,48 @@ export default {
           type: 'error'
         })
       }
-      this.$http.post('/api/user/user/login',this.form).then(res=>{
-        console.log(res)
-        if(res.data.loginStatus === 1){
-          this.$message({
-            message: '登录成功',
-            type: 'success'
-          })
-          let user = res.data.user
-          window.sessionStorage.setItem('user',JSON.stringify(user))
-          this.$router.push('/home')
-        }else{
-          this.$message({
-            message: '登录失败',
-            type: 'error'
-          })
-        }
+      // this.$http.post('/api/user/user/login',this.form).then(res=>{
+      //   console.log(res)
+      //   if(res.data.loginStatus === 1){
+      //     this.$message({
+      //       message: '登录成功',
+      //       type: 'success'
+      //     })
+      //     let user = res.data.user
+      //     window.sessionStorage.setItem('user',JSON.stringify(user))
+      //     this.$router.push('/home')
+      //   }else{
+      //     this.$message({
+      //       message: '登录失败',
+      //       type: 'error'
+      //     })
+      //   }
+      // })
+      const params = new URLSearchParams();
+      params.append('username',this.form.email)
+      params.append('password',this.form.password)
+      axios({
+        method:'post',
+        url:'/api/user/login',
+        data:params,
+        headers:{'Content-Type':"application/x-www-form-urlencoded"}
+      }).then(res=>{
+          console.log(res)
+          if(res.data.code === "000220"){
+            this.$message({
+              message: '登录成功',
+              type: 'success'
+            })
+            let user = res.data.user
+            window.sessionStorage.setItem('user',JSON.stringify(user))
+            this.$router.push('/home')
+          }
+          else{
+            this.$message({
+              message: '登录失败',
+              type: 'error'
+            })
+          }
       })
     },
     register(){
