@@ -146,7 +146,7 @@ const activeIndex = ref('/home')
                         <a class="tips_num">{{item.collects}}</a>
                         <SvgIcon name="statistics-g" className="Tips-tag" />
                         <a class="tips_num">{{item.hot}}</a>
-                        <SvgIcon name="share-g" className="Tips-tag" />
+                        <SvgIcon name="share-g" className="Tips-tag" @click="ShareButtonClick"/>
                       </div>
                     </el-col>
                   </el-row>
@@ -600,6 +600,23 @@ export default {
       this.hiveProDialogVisible=false
       //TODO
       //订阅会员服务
+    },
+    ShareButtonClick(){
+      // 这里注释的方式是把url里的路径去掉了，也可以自己修改路径以及添加参数
+      // let invitelink = location.href.replace(this.$route.path,'') + "/register?invitecode="
+      let invitelink = location.href;
+      this.$copyText(invitelink).then(
+          res => {
+            // console.log(res.text) // 这里可以换成提示信息，比如：已成功复制到剪切板
+            this.$message({
+              message:'网址复制成功',
+              type:'success',
+            })
+          },
+          err => {
+            console.log(err) // 同上
+          }
+      )
     }
   }
 }
