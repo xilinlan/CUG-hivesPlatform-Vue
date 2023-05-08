@@ -54,6 +54,16 @@ export default {
     RegisterDialog,
     ForgetPasswordPage,
   },
+  mounted() {
+    this.$http.get('/api/user/user/infoByToken').then(ref=>{
+      console.log(ref)
+      if(ref.data.msg==='success'){
+        let user = ref.data.user
+        window.sessionStorage.setItem('user',JSON.stringify(user))
+        this.$router.push('/home')
+      }
+    })
+  },
   data(){
     return{
       timer: null,
