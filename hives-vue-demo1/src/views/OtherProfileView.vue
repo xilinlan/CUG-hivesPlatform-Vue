@@ -148,6 +148,7 @@
 
 import CommentDialog from "../components/CommentDialog.vue";
 import SvgIcon from "../components/svgIcon.vue";
+import router from "@/router";
 
 export default {
   name: "OtherProfileView",
@@ -201,7 +202,7 @@ export default {
             message:ref.data.msg,
             type:'error'
           })
-          this.$router.push('/home')
+          router.push('/home')
         }
       })
     },
@@ -374,7 +375,7 @@ export default {
     },
 
     messageToOtherUser(){
-      this.$router.push({path: '/message',query:{ otherUser:JSON.stringify(this.otherUser)}});
+      router.push({path: '/message',query:{ otherUser:JSON.stringify(this.otherUser)}});
     }
   }
 }

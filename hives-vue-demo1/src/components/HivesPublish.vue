@@ -22,7 +22,7 @@ export default {
   name: "HivesPublish",
   mounted(){
     this.getDirAndToken()
-    this.actionUrl='http://rszvgtifo.hn-bkt.clouddn.com/'
+    this.actionUrl='http://ru8697eyl.hn-bkt.clouddn.com/'
   },
   data() {
     return {

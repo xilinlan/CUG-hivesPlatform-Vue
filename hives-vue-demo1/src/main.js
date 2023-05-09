@@ -35,6 +35,7 @@ router.beforeEach((to,from,next)=>{
         }
     }
 })
+
 app.config.globalProperties.$http=service
 app.use(VueClipboard)
 app.use(createPinia())

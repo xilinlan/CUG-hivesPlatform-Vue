@@ -178,6 +178,7 @@ export default {
   width: 100%;
   height: 100%;
   float: right;
+  background-color: white;
 }
 .name {
   position: relative;
@@ -213,7 +214,7 @@ export default {
   height: 432px;
   overflow: auto;
   padding: 10px;
-  margin: 0px 0 11px 0;
+  margin: 0 0 11px 0;
   background-color: #F5F5F5;
 }
 .middle::-webkit-scrollbar {

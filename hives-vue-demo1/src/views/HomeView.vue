@@ -1,209 +1,275 @@
 <script setup>
-import { ref } from 'vue'
-import { Search } from '@element-plus/icons-vue'
+import {ref} from 'vue'
+import {Search} from '@element-plus/icons-vue'
 import SvgIcon from "@/components/SvgIcon.vue";
+import routers from "@/router";
+
 const activeIndex = ref('/home')
 </script>
 
 <template>
-<!--  左侧导航栏-->
+  <!--  左侧导航栏-->
   <el-row :gutter="0">
-    <el-col :span="this.$router.currentRoute.value.path==='/message'?24:19"><div class="grid-content ep-bg-purple">
-      <el-container class="layout-container-demo" >
-        <el-aside :width="this.$router.currentRoute.value.path==='/message'?'23.5%':'30%'">
-          <el-scrollbar>
-            <el-menu @select="MeanClick" class="el-menu-home">
-              <SvgIcon name="beeDog" class="logo"/>
-              <a class="logoTittle">Hives Platform</a>
-              <el-menu-item class="main-menu-item" index="/home"><el-icon><Monitor /></el-icon>Home</el-menu-item>
-              <el-menu-item class="main-menu-item" index="/explore"><el-icon><Search /></el-icon>Explore</el-menu-item>
-              <el-menu-item class="main-menu-item" index="/friends"><el-icon><User /></el-icon>Friends</el-menu-item>
-              <el-menu-item class="main-menu-item" index="/notifications"><el-icon><Bell /></el-icon>Notifications</el-menu-item>
-              <el-menu-item class="main-menu-item" index="/message"><el-icon><Message /></el-icon>Message</el-menu-item>
-              <el-menu-item class="main-menu-item" index="/likes"><el-icon><Star /></el-icon>Bookmarks</el-menu-item>
-              <el-menu-item class="main-menu-item" index="6"><el-icon><Promotion /></el-icon>Hive Pro+</el-menu-item>
-              <el-menu-item class="main-menu-item" index="/profile"><el-icon><UserFilled /></el-icon>Profile</el-menu-item>
-              <el-menu-item class="main-menu-item" index="8"><el-icon><CirclePlus /></el-icon>More Function</el-menu-item>
-<!--              <el-menu-item class="main-menu-item" index="9"><SvgIcon name="bee" class="bee"/>Hive</el-menu-item>-->
-              <el-sub-menu index="9">
-                <template #title class="main-menu-item">
-                  <SvgIcon name="bee" class="bee"/>
-                  <span>Hive</span>
-                </template>
-                <el-menu-item class="main-menu-item" index="9-1"><el-icon><Picture /></el-icon>Primary Hive</el-menu-item>
-                <el-menu-item class="main-menu-item" index="9-2"><el-icon><VideoPlay /></el-icon>Video Hive</el-menu-item>
-              </el-sub-menu>
-              <el-menu-item class="main-menu-item" index="10"><el-icon><Tools /></el-icon>Set</el-menu-item>
-            </el-menu>
-          </el-scrollbar>
-        </el-aside>
-
-<!--        中间内容界面-->
-        <el-container>
-          <el-header style="text-align: left; font-size: 20px" v-if="this.$router.currentRoute.value.path==='/home'||this.$router.currentRoute.value.path==='/following'">
-            <div class="toolbar">
-              <div>Home</div>
-              <el-menu
-                  :default-active="activeIndex"
-                  class="el-menu-demo"
-                  mode="horizontal"
-                  @select="MeanClick"
-              >
-                <el-menu-item index="/home" style="width: 50%">For you</el-menu-item>
-                <el-menu-item index="/following" style="width: 40%">Following</el-menu-item>
+    <el-col :span="routers.currentRoute.value.path==='/message'?24:19">
+      <div class="grid-content ep-bg-purple">
+        <el-container class="layout-container-demo">
+          <el-aside :width="routers.currentRoute.value.path==='/message'?'23.5%':'30%'">
+            <el-scrollbar>
+              <el-menu @select="MeanClick" class="el-menu-home">
+                <SvgIcon name="beeDog" class="logo"/>
+                <a class="logoTittle">Hives Platform</a>
+                <el-menu-item class="main-menu-item" index="/home">
+                  <el-icon>
+                    <Monitor/>
+                  </el-icon>
+                  Home
+                </el-menu-item>
+                <el-menu-item class="main-menu-item" index="-4">
+                  <el-icon>
+                    <Search/>
+                  </el-icon>
+                  Explore
+                </el-menu-item>
+                <el-menu-item class="main-menu-item" index="/friends">
+                  <el-icon>
+                    <User/>
+                  </el-icon>
+                  Friends
+                </el-menu-item>
+                <el-menu-item class="main-menu-item" index="/notifications">
+                  <el-icon>
+                    <Bell/>
+                  </el-icon>
+                  Notifications
+                </el-menu-item>
+                <el-menu-item class="main-menu-item" index="/message">
+                  <el-icon>
+                    <Message/>
+                  </el-icon>
+                  Message
+                </el-menu-item>
+                <el-menu-item class="main-menu-item" index="-3">
+                  <el-icon>
+                    <Star/>
+                  </el-icon>
+                  Bookmarks
+                </el-menu-item>
+                <el-menu-item class="main-menu-item" index="6">
+                  <el-icon>
+                    <Promotion/>
+                  </el-icon>
+                  Hive Pro+
+                </el-menu-item>
+                <el-menu-item class="main-menu-item" index="/profile">
+                  <el-icon>
+                    <UserFilled/>
+                  </el-icon>
+                  Profile
+                </el-menu-item>
+                <el-menu-item class="main-menu-item" index="-2">
+                  <el-icon>
+                    <CirclePlus/>
+                  </el-icon>
+                  More Function
+                </el-menu-item>
+                <!--              <el-menu-item class="main-menu-item" index="9"><SvgIcon name="bee" class="bee"/>Hive</el-menu-item>-->
+                <el-sub-menu index="9">
+                  <template #title class="main-menu-item">
+                    <SvgIcon name="bee" class="bee"/>
+                    <span>Hive</span>
+                  </template>
+                  <el-menu-item class="main-menu-item" index="9-1">
+                    <el-icon>
+                      <Picture/>
+                    </el-icon>
+                    Primary Hive
+                  </el-menu-item>
+                  <el-menu-item class="main-menu-item" index="9-2">
+                    <el-icon>
+                      <VideoPlay/>
+                    </el-icon>
+                    Video Hive
+                  </el-menu-item>
+                </el-sub-menu>
+                <el-menu-item class="main-menu-item" index="-1">
+                  <el-icon>
+                    <Tools/>
+                  </el-icon>
+                  Set
+                </el-menu-item>
               </el-menu>
-            </div>
-          </el-header>
-          <el-main class="el-main-content">
-            <router-view/>
+            </el-scrollbar>
+          </el-aside>
 
-<!--            广场默认第一选项内容-->
-            <div class="foryou-content-box" v-if="this.$router.currentRoute.value.path==='/home'">
-<!--              输入框-->
-              <div class="comment-input-box">
-                <el-form-item :inline="true">
-                  <el-avatar :src="userImageUrl" :size="'large'"/>
-                  <el-input
-                      class="comment-input"
-                      v-model="contentInput2"
-                      placeholder="What's happening?"
-                      :type="'textarea'"
-                      :rows="5"
-                      style="width:90%;margin-left: 10px;margin-top: 2%"
-                  >
-                  </el-input>
-<!--                  图片上传-->
-                  <div class="hives-picture-box"  style="margin-left: 10%;margin-top: 1%" v-if="dialogVisibleForYouUpload">
-                    <HivesPublish ref="hiveForYouPublish"/>
-                  </div>
-<!--                  图标-->
-                </el-form-item>
-                <el-form-item :inline="true" style="margin-left: 5%">
-                  <SvgIcon name="picture" className="picture" @click="PictureClick"/>
-                  <SvgIcon name="emoji" className="emoji" @click="emojiShow"/>
-                  <SvgIcon name="file" className="file"/>
-                  <SvgIcon name="location" className="location"/>
-                  <SvgIcon name="tag" className="tag"/>
-                  <el-button round style="
+          <!--        中间内容界面-->
+          <el-container>
+            <el-header style="text-align: left; font-size: 20px"
+                       v-if="routers.currentRoute.value.path==='/home'||routers.currentRoute.value.path==='/following'">
+              <div class="toolbar">
+                <div>Home</div>
+                <el-menu
+                    :default-active="activeIndex"
+                    class="el-menu-demo"
+                    mode="horizontal"
+                    @select="MeanClick"
+                >
+                  <el-menu-item index="/home" style="width: 50%">For you</el-menu-item>
+                  <el-menu-item index="/following" style="width: 40%">Following</el-menu-item>
+                </el-menu>
+              </div>
+            </el-header>
+            <el-main class="el-main-content">
+              <router-view/>
+
+              <!--            广场默认第一选项内容-->
+              <div class="foryou-content-box" v-if="routers.currentRoute.value.path==='/home'">
+                <!--              输入框-->
+                <div class="comment-input-box">
+                  <el-form-item :inline="true">
+                    <el-avatar :src="userImageUrl" :size="'large'"/>
+                    <el-input
+                        class="comment-input"
+                        v-model="contentInput2"
+                        placeholder="What's happening?"
+                        :type="'textarea'"
+                        :rows="5"
+                        style="width:90%;margin-left: 10px;margin-top: 2%"
+                    >
+                    </el-input>
+                    <!--                  图片上传-->
+                    <div class="hives-picture-box" style="margin-left: 10%;margin-top: 1%"
+                         v-if="dialogVisibleForYouUpload">
+                      <HivesPublish ref="hiveForYouPublish"/>
+                    </div>
+                    <!--                  图标-->
+                  </el-form-item>
+                  <el-form-item :inline="true" style="margin-left: 5%">
+                    <SvgIcon name="picture" className="picture" @click="PictureClick"/>
+                    <SvgIcon name="emoji" className="emoji" @click="emojiShow"/>
+                    <SvgIcon name="file" className="file"/>
+                    <SvgIcon name="location" className="location"/>
+                    <SvgIcon name="tag" className="tag"/>
+                    <el-button round style="
                     margin-left: 40%;
                     font-weight: bolder;
                     font-size: 20px;
                     width: 150px;
                     background: #FFD103;"
-                   @click="HiveButtonClick2"
-                  >Hive</el-button>
-                </el-form-item>
-                <div class="emoji-container" v-show="emojiHowVisible">
-                  <emotion @chooseEmojiDefault="chooseEmojiDefault"/>
-                </div>
-                <el-divider/>
-              </div>
-
-
-              <div>
-
-                <div v-for="(item,index) in HivesData" :key="index">
-                  <el-row :gutter="20">
-                    <el-col :span="4">
-                      <div class="grid-content ep-bg-purple">
-                        <el-popconfirm title="Are you sure to visit profile?" @confirm="visitOtherProfile(item)">
-                          <template #reference>
-                            <img :src="item.header" style="width: 70px; height: 70px;border-radius: 70px">
-                          </template>
-                        </el-popconfirm>
-                      </div>
-                    </el-col>
-                    <el-col :span="20">
-                      <div>
-                        <div>
-                          <a style="font-size: 20px;font-weight: bolder">{{item.nickname}}</a>
-                          <a style="color: #BEBEBE;margin-left: 5px">{{item.email}}</a>
-                          <a style="color: #BEBEBE"> . </a>
-                          <a style="color: #BEBEBE">{{item.updateTime}}</a>
-                        </div>
-                        <p>{{item.content}}</p>
-                        <div v-if="item.type===0">
-                          <ul class="el-upload-list el-upload-list--picture-card">
-                            <li class="el-upload-list__item is-success" v-for="fit in item.urls" :key="fit">
-                              <img style="width: 100%; height: 100%" :src="fit"/>
-                            </li>
-                          </ul>
-                        </div>
-                        <div v-if="item.type===1">
-                          <div v-for="fit in item.urls">
-                            <video :src=fit class="avatar" controls="controls" style="width: 100%;height: 50%"/>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <SvgIcon name="love-g" className="Tips-tag" v-if="!item.isLove" @click="LoveClick(index)"/>
-                        <SvgIcon name="love-p" className="Tips-tag" v-if="item.isLove" @click="LoveCancel(index)"/>
-                        <a class="tips_num">{{item.likes}}</a>
-                        <SvgIcon name="comment-g" className="Tips-tag" @click="showCommentDialog(item)"/>
-                        <a class="tips_num">{{item.reply}}</a>
-                        <SvgIcon name="collection-g" className="Tips-tag" v-if="!item.isCollect" @click="CollectClick(index)"/>
-                        <SvgIcon name="collection-y" className="Tips-tag" v-if="item.isCollect" @click="ClickCancel(index)"/>
-                        <a class="tips_num">{{item.collects}}</a>
-                        <SvgIcon name="statistics-g" className="Tips-tag" />
-                        <a class="tips_num">{{item.hot}}</a>
-                        <SvgIcon name="share-g" className="Tips-tag" @click="ShareButtonClick"/>
-                      </div>
-                    </el-col>
-                  </el-row>
+                               @click="HiveButtonClick2"
+                    >Hive
+                    </el-button>
+                  </el-form-item>
+                  <div class="emoji-container" v-show="emojiHowVisible">
+                    <emotion @chooseEmojiDefault="chooseEmojiDefault"/>
+                  </div>
                   <el-divider/>
                 </div>
-                <!--              更多内容按钮-->
-                <el-pagination
-                    class="Hives-Type-Menu"
-                    v-model:current-page="currentPage"
-                    layout="prev, pager, next"
-                    :total="totalCount"
-                    @current-change="initHivesShow" />
 
+
+                <div>
+
+                  <div v-for="(item,index) in HivesData" :key="index">
+                    <el-row :gutter="20">
+                      <el-col :span="4">
+                        <div class="grid-content ep-bg-purple">
+                          <el-popconfirm title="Are you sure to visit profile?" @confirm="visitOtherProfile(item)">
+                            <template #reference>
+                              <img :src="item.header" style="width: 70px; height: 70px;border-radius: 70px">
+                            </template>
+                          </el-popconfirm>
+                        </div>
+                      </el-col>
+                      <el-col :span="20">
+                        <div>
+                          <div>
+                            <a style="font-size: 20px;font-weight: bolder">{{ item.nickname }}</a>
+                            <a style="color: #BEBEBE;margin-left: 5px">{{ item.email }}</a>
+                            <a style="color: #BEBEBE"> . </a>
+                            <a style="color: #BEBEBE">{{ item.updateTime }}</a>
+                          </div>
+                          <p>{{ item.content }}</p>
+                          <div v-if="item.type===0">
+                            <ul class="el-upload-list el-upload-list--picture-card">
+                              <li class="el-upload-list__item is-success" v-for="fit in item.urls" :key="fit">
+                                <img style="width: 100%; height: 100%" :src="fit"/>
+                              </li>
+                            </ul>
+                          </div>
+                          <div v-if="item.type===1">
+                            <div v-for="fit in item.urls">
+                              <video :src=fit class="avatar" controls="controls" style="width: 100%;height: 50%"/>
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          <SvgIcon name="love-g" className="Tips-tag" v-if="!item.isLove" @click="LoveClick(index)"/>
+                          <SvgIcon name="love-p" className="Tips-tag" v-if="item.isLove" @click="LoveCancel(index)"/>
+                          <a class="tips_num">{{ item.likes }}</a>
+                          <SvgIcon name="comment-g" className="Tips-tag" @click="showCommentDialog(item)"/>
+                          <a class="tips_num">{{ item.reply }}</a>
+                          <SvgIcon name="collection-g" className="Tips-tag" v-if="!item.isCollect"
+                                   @click="CollectClick(index)"/>
+                          <SvgIcon name="collection-y" className="Tips-tag" v-if="item.isCollect"
+                                   @click="ClickCancel(index)"/>
+                          <a class="tips_num">{{ item.collects }}</a>
+                          <SvgIcon name="statistics-g" className="Tips-tag"/>
+                          <a class="tips_num">{{ item.hot }}</a>
+                          <SvgIcon name="share-g" className="Tips-tag" @click="ShareButtonClick"/>
+                        </div>
+                      </el-col>
+                    </el-row>
+                    <el-divider/>
+                  </div>
+                  <!--              更多内容按钮-->
+                  <el-pagination
+                      class="Hives-Type-Menu"
+                      v-model:current-page="currentPage"
+                      layout="prev, pager, next"
+                      :total="totalCount"
+                      @current-change="initHivesShow"/>
+                </div>
               </div>
-
-
-
-            </div>
-          </el-main>
+            </el-main>
+          </el-container>
         </el-container>
-      </el-container>
-    </div>
+      </div>
     </el-col>
 
 
-<!--    右侧搜索栏-->
-    <el-col :span="5" v-if="this.$router.currentRoute.value.path!=='/message'">
+    <!--    右侧搜索栏-->
+    <el-col :span="5" v-if="routers.currentRoute.value.path!=='/message'">
       <div class="grid-content ep-bg-purple" id="search_div">
-      <el-aside width="100%" style="text-align: center">
-        <el-scrollbar>
-          <div>
-            <el-input
-                class="explore-input"
-                v-model="searchInput"
-                placeholder="Search Hives"
-            />
+        <el-aside width="100%" style="text-align: center">
+          <el-scrollbar>
+            <div>
+              <el-input
+                  class="explore-input"
+                  v-model="searchInput"
+                  placeholder="Search Hives"
+              />
             </div>
-          <div>
-            <el-table :data="tableData" style="width: 100%;margin-top: 10px" class="table_trends">
-              <el-table-column  label="Trends for you" :header-cell-style="{fontSize: '14px',fontWeight:'bolder',color:'black'}">
-                <template  #default="scope">
-                  <p style="color: #D3D3D3;font-size: 10px">{{scope.row.place}}</p>
-                  <h1 style="color: #696969;font-size: 15px;font-weight: bolder;text-overflow: ellipsis">{{scope.row.trendsname}}</h1>
-                  <p style="color: #D3D3D3;font-size: 10px">{{scope.row.num}}</p>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-        </el-scrollbar>
-      </el-aside>
-    </div>
+            <div>
+              <el-table :data="tableData" style="width: 100%;margin-top: 10px" class="table_trends">
+                <el-table-column label="Trends for you"
+                                 :header-cell-style="{fontSize: '14px',fontWeight:'bolder',color:'black'}">
+                  <template #default="scope">
+                    <p style="color: #D3D3D3;font-size: 10px">{{ scope.row.place }}</p>
+                    <h1 style="color: #696969;font-size: 15px;font-weight: bolder;text-overflow: ellipsis">
+                      {{ scope.row.trendsname }}</h1>
+                    <p style="color: #D3D3D3;font-size: 10px">{{ scope.row.num }}</p>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </el-scrollbar>
+        </el-aside>
+      </div>
     </el-col>
 
 
   </el-row>
 
-<!--  hives发布对话框-->
+  <!--  hives发布对话框-->
   <el-dialog
       v-model="dialogVisible"
       title="Hives"
@@ -217,7 +283,7 @@ const activeIndex = ref('/home')
     <el-button round class="Hive-button" @click="HiveButtonClick">Hive</el-button>
   </el-dialog>
 
-<!--  videoHive发布对话框-->
+  <!--  videoHive发布对话框-->
   <el-dialog
       v-model="videoDialogVisible"
       title="Hives"
@@ -233,7 +299,7 @@ const activeIndex = ref('/home')
   <!--  评论对话框-->
   <CommentDialog ref="commentDialog" @updateComment="updatePage"/>
 
-<!--  hive会员选择框-->
+  <!--  hive会员选择框-->
   <el-dialog
       v-model="hiveProDialogVisible"
       width="37%"
@@ -243,24 +309,32 @@ const activeIndex = ref('/home')
   >
     <template #header="{ close, titleId, titleClass }">
       <div class="my-header" style="font-weight: bolder;font-size: 50px;height: 50px;width: 100%;">
-        <el-icon @click="closeHiveProDialog"><CloseBold /></el-icon>
+        <el-icon @click="closeHiveProDialog">
+          <CloseBold/>
+        </el-icon>
         <a style="position: relative;left: 18%;bottom: 10%">Hive Pro+</a>
       </div>
     </template>
     <el-divider style="position: relative;bottom: 30px"/>
     <div>
       <el-row>
-        <el-col :span="16"><a style="font-size: 30px;font-weight: bolder;color: black">Hive subscribers with a verified phone number will get a yellow checkmark once approved</a></el-col>
-        <el-col :span="8" > <SvgIcon name="rocket" style="position: relative;right: 50%;top:20%"/></el-col>
+        <el-col :span="16"><a style="font-size: 30px;font-weight: bolder;color: black">Hive subscribers with a verified
+          phone number will get a yellow checkmark once approved</a></el-col>
+        <el-col :span="8">
+          <SvgIcon name="rocket" style="position: relative;right: 50%;top:20%"/>
+        </el-col>
       </el-row>
     </div>
     <div style="margin-top: 50px">
       <el-row>
-        <el-col :span="5"><SvgIcon name="gift" style="position: relative;right: 60%"/></el-col>
+        <el-col :span="5">
+          <SvgIcon name="gift" style="position: relative;right: 60%"/>
+        </el-col>
         <el-col :span="19">
           <div style="width: 70%;margin-left: 20%">
             <div style="font-size: 30px;font-weight: bolder;color: black">All the existing Yellow features</div>
-            <a style="font-size: 20px">Edit Hive,1080p video uploads,Reader,custom navigation,Bookmark Folders,Top Articles and more</a>
+            <a style="font-size: 20px">Edit Hive,1080p video uploads,Reader,custom navigation,Bookmark Folders,Top
+              Articles and more</a>
           </div>
         </el-col>
       </el-row>
@@ -268,7 +342,9 @@ const activeIndex = ref('/home')
     <div style="margin-left: 9%;margin-top: 50px">
       <el-row :gutter="20">
         <el-col :span="12">
-          <div class="Pro-chose-box" :style="annualPlanChosen?'border-color:#FFD103;  border-style: solid;' : 'border-color:#8e9292;'" @click="AnnualPlanClick">
+          <div class="Pro-chose-box"
+               :style="annualPlanChosen?'border-color:#FFD103;  border-style: solid;' : 'border-color:#8e9292;'"
+               @click="AnnualPlanClick">
             <div style="position: relative;top:10%;left:10%">
               <div>Annual Plan</div>
               <div style="font-size: 20px;font-weight: bolder">￥25/month</div>
@@ -277,7 +353,9 @@ const activeIndex = ref('/home')
           </div>
         </el-col>
         <el-col :span="12">
-          <div class="Pro-chose-box" :style="!annualPlanChosen?'border-color:#FFD103;  border-style: solid;' : 'border-color:#8e9292;'" @click="MonthlyPlanClick">
+          <div class="Pro-chose-box"
+               :style="!annualPlanChosen?'border-color:#FFD103;  border-style: solid;' : 'border-color:#8e9292;'"
+               @click="MonthlyPlanClick">
             <div style="position: relative;top:10%;left:10%">
               <div>Monthly Plan</div>
               <div style="font-size: 20px;font-weight: bolder">￥30/month</div>
@@ -292,13 +370,12 @@ const activeIndex = ref('/home')
 </template>
 
 <script>
-
-import {ref} from "vue";
 import CommentDialog from "../components/CommentDialog.vue";
 import HivesPublish from "../components/HivesPublish.vue";
 import '../assets/font/font.css'
 import emotion from "../components/emotion.vue";
 import VideoPublish from "../components/VideoPublish.vue";
+import router from "@/router";
 
 export default {
   mounted() {
@@ -398,12 +475,15 @@ export default {
       })
     },
     MeanClick(index){
+      if(index<0){
+        return
+      }
       if(index!=="9"&&index!=="9-1"&&index!=="9-2"){
         if(index==="6"){
           this.hiveProDialogVisible=true
           return
         }
-        this.$router.push(index);
+        router.push(index);
       }
       else{
         if(index==="9-1"){
@@ -544,7 +624,7 @@ export default {
     },
     visitOtherProfile(item){
       console.log(item)
-      this.$router.push({path: '/other-profile',query:{ userId:item.userId}});
+      router.push({path: '/other-profile',query:{ userId:item.userId}});
     },
     handleDialogClose(){
       this.contentInput=''

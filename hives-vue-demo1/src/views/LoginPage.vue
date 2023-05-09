@@ -55,12 +55,13 @@ export default {
     ForgetPasswordPage,
   },
   mounted() {
+    const that = this
     this.$http.get('/api/user/user/infoByToken').then(ref=>{
       console.log(ref)
       if(ref.data.msg==='success'){
         let user = ref.data.user
         window.sessionStorage.setItem('user',JSON.stringify(user))
-        this.$router.push('/home')
+        that.$router.push('/home')
       }
     })
   },
@@ -93,24 +94,8 @@ export default {
           type: 'error'
         })
       }
-      // this.$http.post('/api/user/user/login',this.form).then(res=>{
-      //   console.log(res)
-      //   if(res.data.loginStatus === 1){
-      //     this.$message({
-      //       message: '登录成功',
-      //       type: 'success'
-      //     })
-      //     let user = res.data.user
-      //     window.sessionStorage.setItem('user',JSON.stringify(user))
-      //     this.$router.push('/home')
-      //   }else{
-      //     this.$message({
-      //       message: '登录失败',
-      //       type: 'error'
-      //     })
-      //   }
-      // })
       const params = new URLSearchParams();
+      const that = this
       params.append('username',this.form.email)
       params.append('password',this.form.password)
       axios({
@@ -127,7 +112,7 @@ export default {
             })
             let user = res.data.user
             window.sessionStorage.setItem('user',JSON.stringify(user))
-            this.$router.push('/home')
+            that.$router.push('/home')
           }
           else{
             this.$message({
