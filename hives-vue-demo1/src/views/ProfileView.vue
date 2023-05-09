@@ -64,12 +64,17 @@ import { InfoFilled } from '@element-plus/icons-vue'
             <div v-for="(item,index) in hivesTable" :key="index">
               <p style="color: #606266">{{ item.updateTime}}</p>
               <p style="margin-bottom: 10px;font-size: 20px">{{ item.content }}</p>
-              <div>
+              <div v-if="item.type===0">
                 <ul class="el-upload-list el-upload-list--picture-card">
                   <li class="el-upload-list__item is-success" v-for="fit in item.urls" :key="fit">
                     <img style="width: 100%; height: 100%" :src="fit" @click="handlePictureCardPreview(fit)"/>
                   </li>
                 </ul>
+              </div>
+              <div v-if="item.type===1">
+                <div v-for="fit in item.urls">
+                  <video :src=fit class="avatar" controls="controls" style="width: 100%;height: 50%"/>
+                </div>
               </div>
               <div>
                 <SvgIcon name="love-g" className="Tips-tag" v-if="!item.isLove" @click="LoveClick(index)"/>

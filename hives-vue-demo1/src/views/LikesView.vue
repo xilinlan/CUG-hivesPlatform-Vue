@@ -21,12 +21,17 @@ import SvgIcon from "@/components/SvgIcon.vue";
               <a style="color: #BEBEBE">{{item.updateTime}}</a>
             </div>
             <p>{{item.content}}</p>
-            <div>
+            <div v-if="item.type===0">
               <ul class="el-upload-list el-upload-list--picture-card">
                 <li class="el-upload-list__item is-success" v-for="fit in item.urls" :key="fit">
                   <img style="width: 100%; height: 100%" :src="fit" @click="handlePictureCardPreview(fit)"/>
                 </li>
               </ul>
+            </div>
+            <div v-if="item.type===1">
+              <div v-for="fit in item.urls">
+                <video :src=fit class="avatar" controls="controls" style="width: 100%;height: 50%"/>
+              </div>
             </div>
           </div>
           <div>

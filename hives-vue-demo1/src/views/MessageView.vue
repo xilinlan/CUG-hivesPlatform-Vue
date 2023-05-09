@@ -7,7 +7,26 @@
 <!--        <div class="Message-Zero-Content-Txt">Drop a line,share Hives and more with private conversations between you and others on Hives</div>-->
 <!--        <el-button round class="Message-Write-Button" @click="writeMessageButtonClick">Write a message</el-button>-->
 <!--      </div>-->
-      <Contact @set-contact="set"/>
+<!--      <el-menu-->
+<!--          :default-active="activeIndex"-->
+<!--          class="el-menu-demo"-->
+<!--          mode="horizontal"-->
+<!--          @select="handleSelect"-->
+<!--      >-->
+<!--        <el-menu-item index="1">Focus</el-menu-item>-->
+<!--        <el-menu-item index="2">Friends</el-menu-item>-->
+<!--        <el-menu-item index="3">Private Message</el-menu-item>-->
+<!--      </el-menu>-->
+      <div>
+        <Contact @set-contact="set" ref="focusContact"/>
+      </div>
+      <div>
+        <OnlyContact @set-contact="set" ref="friendsContact"/>
+      </div>
+      <div>
+        <OnlyContact @set-contact="set" ref="privateMessageContact"/>
+      </div>
+
     </el-col>
     <el-col :span="16">
 <!--      <div class="Message-Zero-Content-Box" v-if="messageIndex!==-1">-->
@@ -33,10 +52,11 @@
 <script>
 import Contact from "../components/Contact.vue";
 import Dialog from "../components/Dialog.vue";
+import OnlyContact from "../components/OnlyContact.vue";
 
 export default {
   name: "MessageView",
-  components: {Contact,Dialog,},
+  components: {Contact,Dialog,OnlyContact},
   data(){
     return{
       user:{},
@@ -45,10 +65,28 @@ export default {
       choseFriendDialogVisible:false,
       contact: null,
       msgList: [],
+      activeIndex:'1',
     }
   },
   mounted() {
     this.user=JSON.parse(window.sessionStorage.getItem('user'))
+    this.$refs.friendsContact.name='Friends'
+    this.$refs.privateMessageContact.name='Private Message'
+    var otherUser = this.$route.query.otherUser;
+    console.log("otherUser",otherUser)
+    if(otherUser!==undefined){
+      otherUser=JSON.parse(otherUser)
+      let targetUser = {
+        "id":-1,
+        "userId":this.user.id,
+        "targetId":otherUser.id,
+        "nickname":otherUser.nickname,
+        "header":otherUser.header
+      }
+      console.log("targetUser",targetUser)
+      this.$refs.privateMessageContact.friendList.push(targetUser)
+    }
+
   },
   methods:{
     writeMessageButtonClick(){
@@ -72,6 +110,10 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    handleSelect(index){
+      this.activeIndex=index
+      console.log(this.activeIndex)
     }
   }
 }

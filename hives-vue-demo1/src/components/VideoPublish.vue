@@ -10,7 +10,7 @@
     <el-button type="primary">Upload Video</el-button>
   </el-upload>
   <div v-for="item in fileList" style="margin-top: 5px">
-    <video :src="item.url" class="avatar" controls="controls" style="width: 100%"/>
+    <video :src="item.url" class="avatar" controls="controls" style="width: 100%;height: 50%"/>
   </div>
 </template>
 

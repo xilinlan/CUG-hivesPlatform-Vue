@@ -159,7 +159,7 @@ export default {
       this.msgList.push(entity)
       this.msg = ''
       this.hint = ''
-      this.emojiHowVisible = !this.emojiHowVisible
+      this.emojiHowVisible = false
     },
     emojiShow(){
       this.emojiHowVisible = !this.emojiHowVisible
@@ -181,8 +181,8 @@ export default {
 }
 .name {
   position: relative;
-  bottom: 10px;
-  left: 25px;
+  bottom: 5%;
+  left: 5%;
   font-weight: bolder;
   font-size: 30px;
 }
@@ -201,19 +201,19 @@ export default {
   height: 60px;
   border-bottom: #d0d0d0 1px solid;
 }
-.top::after {
-  content: " ";
-  float: right;
-  position: relative;
-  top: 40px;
-  border: 4px solid #0000;
-  border-top-color: #8e9292;
-}
+/*.top::after {*/
+/*  content: " ";*/
+/*  float: right;*/
+/*  position: relative;*/
+/*  top: 40px;*/
+/*  border: 4px solid #0000;*/
+/*  border-top-color: #8e9292;*/
+/*}*/
 .middle {
   height: 432px;
   overflow: auto;
   padding: 10px;
-  margin: 6px 0 11px 0;
+  margin: 0px 0 11px 0;
   background-color: #F5F5F5;
 }
 .middle::-webkit-scrollbar {
@@ -304,15 +304,15 @@ export default {
   vertical-align: middle;
   display: inline-block;
 }
-.dialog .bottom::after {
-  content: " ";
-  float: right;
-  position: relative;
-  top: -121px;
-  left: 75px;
-  border: 4px solid #0000;
-  border-bottom-color: #8e9292;
-}
+/*.dialog .bottom::after {*/
+/*  content: " ";*/
+/*  float: right;*/
+/*  position: relative;*/
+/*  top: -121px;*/
+/*  left: 75px;*/
+/*  border: 4px solid #0000;*/
+/*  border-bottom-color: #8e9292;*/
+/*}*/
 .send {
   float: right;
   position: relative;
