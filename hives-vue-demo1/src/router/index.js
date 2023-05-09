@@ -10,7 +10,8 @@ import LikesView from "../views/LikesView.vue";
 import LoginPage from "../views/LoginPage.vue";
 import MessageView from "../views/MessageView.vue";
 import OtherProfileView from "../views/OtherProfileView.vue";
-
+import Notification_mentions from "@/components/Notification_mentions.vue";
+import Notification_verified from "@/components/Notification_verified.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -41,6 +42,18 @@ const router = createRouter({
           path:'/notifications',
           name:'NotificationsView',
           component:NotificationsView,
+          children:[
+            {
+              path:'/verified',
+              name:'Notification_verified',
+              component:Notification_verified,
+            },
+            {
+              path:'/mentions',
+              name:'Notification_mentions',
+              component:Notification_mentions,
+            },
+          ]
         },
         {
           path:'/following',
