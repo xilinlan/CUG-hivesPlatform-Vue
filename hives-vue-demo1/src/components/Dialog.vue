@@ -78,7 +78,7 @@ export default {
   mounted() {
     this.user = JSON.parse(window.sessionStorage.getItem('user'))
     // 渲染界面时, 根据用户的 id 获取 websocket 连接
-    this.socket = new WebSocket(`ws://1.117.105.39:14000/websocket/${this.user.id}`)
+    this.socket = new WebSocket(`ws://124.223.20.95:14000/websocket/${this.user.id}`)
     this.socket.onmessage = event => {
       this.msgList.push(JSON.parse(event.data))
     }

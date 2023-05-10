@@ -21,6 +21,13 @@ export default defineConfig({
     }
   },
   server: { //主要是加上这段代码
+    // host:'0.0.0.0',
+    // client: {
+    //   webSocketURL: 'ws://1.117.105.39:14000/ws',
+    // },
+    // headers: {
+    //     'Access-Control-Allow-Origin': '*',
+    // },
     open: true,//启动项目自动弹出浏览器
     port: 3000,//启动端口
     cors:true,

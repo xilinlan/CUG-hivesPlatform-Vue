@@ -219,19 +219,20 @@ export default {
         "password":this.passwordSetForm.password
       }
       console.log(params)
+      const that = this
       this.$http.post("/api/user/user/register",params).then(ref=>{
         if(ref.data.regStatus!=='SUCCESS'){
           this.$message({
             message:ref.data.msg,
-            type:'error'
+            type:'success'
           })
+          that.registerDialogVisible=false
         }
         else{
           this.$message({
             message:ref.data.msg,
-            type:'success'
+            type:'error'
           })
-          this.registerDialogVisible=false
         }
       })
     }
