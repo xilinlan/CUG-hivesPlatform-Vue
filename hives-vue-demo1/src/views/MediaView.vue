@@ -52,9 +52,9 @@ export default {
           for(let index in this.hivesTable){
             console.log("测试",this.hivesTable[index].urls)
             if(this.hivesTable[index].type===0){
-              this.pictureTable=this.pictureTable.concat(this.hivesTable[index].urls)
+              tempPictureTable=tempPictureTable.concat(this.hivesTable[index].urls)
             }else{
-              this.videoTable=this.videoTable.concat(this.hivesTable[index].urls)
+              tempVideoTable=tempVideoTable.concat(this.hivesTable[index].urls)
             }
           }
           this.pictureTable=tempPictureTable
