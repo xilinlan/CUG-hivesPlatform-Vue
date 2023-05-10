@@ -139,7 +139,6 @@ export default {
 </script>
 
 
-
 <style scoped>
 .notification-bar {
     justify-content: center;
