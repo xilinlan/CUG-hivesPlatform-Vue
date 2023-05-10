@@ -26,7 +26,7 @@
                 </div>
                 <div class="content">
                     <div class="title" >
-                        <span class="name" style="position: revert ; font-size: math">{{ allnotification.name }}</span>
+                        <span class="name" style="position: revert ; ">{{ allnotification.name }}</span>
                         <span class="date" style="margin-left:10px;font-size: small;color: rgb(83, 100, 113)">{{ allnotification.date }}.</span>
                         <span class="action" style="display: block ; color: rgb(83, 100, 113)">{{ allnotification.action }}</span>
                     </div>
@@ -47,7 +47,7 @@
                 </div>
                 <div class="content">
                     <div class="title" >
-                        <span class="name" style="position: revert ; font-size: math">{{ verifiednotification.name }}</span>
+                        <span class="name" style="position: revert ;">{{ verifiednotification.name }}</span>
                         <span class="date" style="margin-left:10px;font-size: small;color: rgb(83, 100, 113)">{{ verifiednotification.date }}.</span>
                         <span class="action" style="display: block ; color: rgb(83, 100, 113)">{{ verifiednotification.action }}</span>
                     </div>
@@ -68,7 +68,7 @@
                 </div>
                 <div class="content">
                     <div class="title" >
-                        <span class="name" style="position: revert ; font-size: math">{{ mentionnotifications.name }}</span>
+                        <span class="name" style="position: revert ;">{{ mentionnotifications.name }}</span>
                         <span class="date" style="margin-left:10px;font-size: small;color: rgb(83, 100, 113)">{{ mentionnotifications.date }}.</span>
                         <span class="action" style="display: block ; color: rgb(83, 100, 113)">{{ mentionnotifications.action }}</span>
                     </div>

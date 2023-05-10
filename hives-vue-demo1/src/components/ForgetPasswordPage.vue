@@ -2,7 +2,7 @@
   <el-dialog
       style="border-radius: 20px"
       v-model="forgetPasswordDialogVisible"
-      title="Register"
+      title="ForgetPassword"
       width="30%"
   >
     <el-steps :active="forgetPasswordActive">
@@ -122,7 +122,8 @@ export default {
   },
   methods:{
     nextForgetPasswordStep(){
-      if(this.registerActive===1){
+      console.log("nextSuccess",this.forgetPasswordActive)
+      if(this.forgetPasswordActive===1){
         //验证码对比验证
         console.log(1)
         let params = {
@@ -138,12 +139,12 @@ export default {
             })
           }
           else
-            this.registerActive=this.registerActive+1
+            this.forgetPasswordActive=this.forgetPasswordActive+1
         })
       }
     },
     beforeForgetPasswordStep(){
-      this.registerActive=this.registerActive-1
+      this.forgetPasswordActive=this.forgetPasswordActive-1
     },
     startCountdown() {
       this.countdown = 59;
@@ -174,7 +175,7 @@ export default {
         "email": this.emailVerificationForm.email,
         "password":this.passwordSetForm.password,
       }
-      this.$http.get("/api/user/user/updatePassword", {params}).then(res=>{
+      this.$http.post("/api/user/user/updatePassword", {params}).then(res=>{
         if (res.data.udpwStatus === 1)
         {
           this.$message({
