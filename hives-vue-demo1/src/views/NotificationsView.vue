@@ -94,7 +94,7 @@ export default {
             allnotifications: [
                 {
                     id: 1,
-                    icon: './src/assets/image/doglogo.png',
+                    icon: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
                     name: 'John Doe',
                     action: 'Like your Hives',
                     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -102,7 +102,7 @@ export default {
                 },
                 {
                     id: 2,
-                    icon: './src/assets/image/doglogo.png',
+                    icon: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
                     name: 'Jane Smith',
                     action: 'Replying to you',
                     content: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
@@ -117,7 +117,7 @@ export default {
            mentionnotifications:[
               {
                 id: 1,
-                icon: './src/assets/image/doglogo.png',
+                icon: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
                 name: 'John Doe',
                 action: 'Mention you in Hives',
                 content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -125,7 +125,7 @@ export default {
               },
               {
                 id: 2,
-                icon: './src/assets/image/doglogo.png',
+                icon: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
                 name: 'Jane Smith',
                 action: 'Mention you in Hives',
                 content: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
