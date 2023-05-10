@@ -56,7 +56,7 @@ export default {
       if (!isLt5M) {
         this.$message({
           type: 'warning',
-          message: '附件大小超限，文件不能超过 5M'
+          message: '附件大小超限，文件不能超过 100M'
         })
         return false
       }
