@@ -193,6 +193,7 @@ export default {
     this.FollowerNum = this.user.fansCount
     this.birthday = this.user.birthday
     this.backImageUrl = this.user.background
+
     this.initProfileHives()
   },
   data(){
@@ -375,7 +376,7 @@ export default {
       this.currentHiveIndex=index
       this.editDialogVisible=true
       this.hiveContentInput=this.hivesTable[index].content
-      let editImageList=this.hivesTable[index].url.map(item=>{
+      let editImageList=this.hivesTable[index].url?.map(item=>{
         return{
           name:item,
           url:item,
