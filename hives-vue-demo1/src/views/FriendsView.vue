@@ -116,6 +116,26 @@ export default {
     deleteFriend(item,index){
       //TODO
       //删除好友
+
+      console.log(item)
+      let params={
+        "userId":this.user.id,
+        "targetId":item.targetId
+      }
+      this.$http.post('/api/user/follow/delete',params).then(ref=>{
+
+        if(ref.data.code===200){
+          this.$message({
+            message:"删除好友成功",
+            type:'success'
+          })
+        }else{
+          this.$message({
+            message:"删除好友失败",
+            type:'error'
+          })
+        }
+      })
       this.friendList.splice(index,1)
     },
     startChatClick(item){

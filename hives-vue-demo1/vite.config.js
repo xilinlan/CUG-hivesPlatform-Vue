@@ -26,7 +26,7 @@ export default defineConfig({
     cors:true,
     proxy: {
       '/api': {
-        target: 'http://120.46.210.186:88',	//实际请求地址
+        target: 'http://139.9.58.205:88',	//实际请求地址
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       },
