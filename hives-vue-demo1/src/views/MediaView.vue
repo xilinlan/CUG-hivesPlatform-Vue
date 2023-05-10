@@ -41,6 +41,8 @@ export default {
         "userId":this.user.id
       }
 
+      let tempPictureTable=[]
+      let tempVideoTable=[]
       this.$http.get('/api/exchange/post/own?',{params}).then(ref=>{
         console.log("profile",ref.data)
         if(ref.data.code===200){
@@ -55,6 +57,8 @@ export default {
               this.videoTable=this.videoTable.concat(this.hivesTable[index].urls)
             }
           }
+          this.pictureTable=tempPictureTable
+          this.videoTable=tempVideoTable
           console.log(this.pictureTable)
         }
         else{
