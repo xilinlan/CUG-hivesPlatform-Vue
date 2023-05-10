@@ -4,6 +4,7 @@
       v-model:file-list="fileList"
       :action="'http://upload-z2.qiniup.com'"
       :on-success="handleSuccess"
+      :before-upload="handleBefore"
       :data="dataObj"
       accept=".mp4,.mov,.wmv,.flv,.avi,.webm,.mkv,.avchd"
   >
@@ -35,6 +36,26 @@ export default {
   methods: {
     initFileList(fileList){
       this.fileList=fileList
+    },
+    handleBefore(file){
+      console.log('文件：', file)
+      var FileExt = file.name.replace(/.+\./, "")
+      const isLt5M = file.size / 1024 / 1024 < 100
+      var extension = ['exe', 'iso'].indexOf(FileExt.toLowerCase()) === -1
+      if (!extension){
+        this.$message({
+          type: 'warning',
+          message: '禁止上传 exe, iso 文件！'
+        })
+        return false
+      }
+      if (!isLt5M) {
+        this.$message({
+          type: 'warning',
+          message: '附件大小超限，文件不能超过 5M'
+        })
+        return false
+      }
     },
     handleSuccess(response,file,fileList){
       fileList.pop()
