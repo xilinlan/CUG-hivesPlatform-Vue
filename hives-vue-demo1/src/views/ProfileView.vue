@@ -260,6 +260,12 @@ export default {
       this.$http.post('api/user/user/updatePersonal',profile).then(res=>{
         console.log(res)
         if(res.data.code===200){
+
+          this.userImageUrl=this.$refs.userImageChange.fileList[0].url
+          this.backImageUrl=this.$refs.groundImageChange.fileList[0].url
+          this.nickname = this.editForm.nickName
+          this.birthday = this.editForm.birthday
+
           let user = sessionStorage.getItem("user");
           if (user != null) {
             // 将JSON格式的对象解析为js对象，currentUser为一个js对象
@@ -270,16 +276,13 @@ export default {
             currentUser.birthday=this.birthday
             currentUser.header=this.userImageUrl
             currentUser.background=this.backImageUrl
+            console.log('user',currentUser)
             window.sessionStorage.setItem('user',JSON.stringify(currentUser))
           }
           this.$message({
             message: '修改成功',
             type: 'success'
           });
-          this.userImageUrl=this.$refs.userImageChange.fileList[0].url
-          this.backImageUrl=this.$refs.groundImageChange.fileList[0].url
-          this.nickname = this.editForm.nickName
-          this.birthday = this.editForm.birthday
           this.ProAndBackEditDialogVisible = false
         }
         else{
@@ -376,12 +379,13 @@ export default {
       this.currentHiveIndex=index
       this.editDialogVisible=true
       this.hiveContentInput=this.hivesTable[index].content
-      let editImageList=this.hivesTable[index].url?.map(item=>{
+      let editImageList=this.hivesTable[index].urls?.map(item=>{
         return{
           name:item,
           url:item,
         }
       })
+      console.log('editImagList',editImageList)
       this.$nextTick(()=>{
         this.$refs.hivesImageChange.initList(editImageList)
       })
@@ -401,7 +405,7 @@ export default {
         currentImageList.push(editImageList[item].url)
       }
       console.log("currenImageList",currentImageList)
-      this.hivesTable[this.currentHiveIndex].url=currentImageList
+      this.hivesTable[this.currentHiveIndex].urls=currentImageList
       this.hivesTable[this.currentHiveIndex].content=this.hiveContentInput
       this.editDialogVisible=false
       //toDo

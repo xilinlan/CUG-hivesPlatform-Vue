@@ -72,7 +72,6 @@ const activeIndex = ref('/home')
                   </el-icon>
                   More Function
                 </el-menu-item>
-                <!--              <el-menu-item class="main-menu-item" index="9"><SvgIcon name="bee" class="bee"/>Hive</el-menu-item>-->
                 <el-sub-menu index="9">
                   <template #title class="main-menu-item">
                     <SvgIcon name="bee" class="bee"/>
@@ -91,11 +90,11 @@ const activeIndex = ref('/home')
                     Video Hive
                   </el-menu-item>
                 </el-sub-menu>
-                <el-menu-item class="main-menu-item" index="-1">
+                <el-menu-item class="main-menu-item" index="-1" @click="LogoutClick">
                   <el-icon>
-                    <Tools/>
+                    <SwitchButton />
                   </el-icon>
-                  Set
+                  Logout
                 </el-menu-item>
               </el-menu>
             </el-scrollbar>
@@ -452,6 +451,44 @@ export default {
     }
   },
   methods: {
+    LogoutClick(){
+      this.$confirm('此操作将退出平台, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        window.localStorage.clear()
+        this.delCookie()
+        router.push('/')
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消退出'
+        });
+      });
+    },
+    delCookie() {
+      var cookies = document.cookie.split(";");
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        var eqPos = cookie.indexOf("=");
+        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie =
+            name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+      }
+      if (cookies.length > 0) {
+        for (var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i];
+          var eqPos = cookie.indexOf("=");
+          var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+          var domain = location.host.substr(location.host.indexOf("."));
+          document.cookie =
+              name +
+              "=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=" +
+              domain;
+        }
+      }
+    },
     updatePage(page){
       this.initHivesShow()
     },
@@ -803,7 +840,7 @@ export default {
   margin-left: 10px;
   font-weight: bolder;
   font-family: 'cocacola';
-  font-size: 30px;
+  font-size: 100%;
 }
 .tips_num{
   margin-left: 5px;
