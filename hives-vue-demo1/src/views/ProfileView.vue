@@ -2,13 +2,15 @@
 import {ref} from "vue";
 import SvgIcon from "@/components/SvgIcon.vue";
 import { InfoFilled } from '@element-plus/icons-vue'
+import routers   from "@/router";
+
 
 </script>
 
 <template>
 <!--  上方头像名字板块-->
   <div style="height:350px;position: relative">
-    <el-image :src="this.backImageUrl" :fit="'cover'" class="background-image"/>
+    <el-image :src="backImageUrl" :fit="'cover'" class="background-image"/>
     <el-popconfirm
         width="300px"
         confirm-button-text="OK"
@@ -19,20 +21,20 @@ import { InfoFilled } from '@element-plus/icons-vue'
         title="Are you sure to edit your profile and background?"
     >
       <template #reference>
-        <el-image :src="this.userImageUrl" :fit="'cover'" class="user-image"/>
+        <el-image :src="userImageUrl" :fit="'cover'" class="user-image"/>
       </template>
     </el-popconfirm>
     <div class="follow-box">
       <div class="userInfo-box">
-        <p class="user-name">{{this.userName}}</p>
-        <a class="user-count">{{this.userCount}}</a>
+        <p class="user-name">{{userName}}</p>
+        <a class="user-count">{{userCount}}</a>
         <el-icon style="margin-left: 5px"><Calendar /></el-icon>
-        <a class="user-count" style="margin-left: 5px">{{this.birthday}}</a>
+        <a class="user-count" style="margin-left: 5px">{{birthday}}</a>
       </div>
       <div style="margin-top: 20px">
-        <a class="follow-number">{{this.FollowingNum}}</a>
+        <a class="follow-number">{{FollowingNum}}</a>
         <a style="margin-left: 5px">Following</a>
-        <a class="follow-number" style="margin-left: 50px">{{this.FollowerNum}}</a>
+        <a class="follow-number" style="margin-left: 50px">{{FollowerNum}}</a>
         <a style="margin-left: 5px">Followers</a>
       </div>
     </div>
@@ -60,7 +62,7 @@ import { InfoFilled } from '@element-plus/icons-vue'
         <el-main>
           <router-view/>
 <!--          默认第一选择hives内容-->
-          <div v-if="this.$router.currentRoute.value.path==='/profile'">
+          <div v-if="routers.currentRoute.value.path==='/profile'">
             <div v-for="(item,index) in hivesTable" :key="index">
               <p style="color: #606266">{{ item.updateTime}}</p>
               <p style="margin-bottom: 10px;font-size: 20px">{{ item.content }}</p>
@@ -172,6 +174,7 @@ import {reactive, ref} from "vue";
 import HivesPublish from "../components/HivesPublish.vue";
 import PictureChange from "../components/PictureChange.vue";
 import HivesEdit from "../components/HivesEdit.vue";
+import router from "@/router";
 
 export default {
   name: "ProfileView",
@@ -190,6 +193,7 @@ export default {
     this.FollowerNum = this.user.fansCount
     this.birthday = this.user.birthday
     this.backImageUrl = this.user.background
+
     this.initProfileHives()
   },
   data(){
@@ -233,11 +237,12 @@ export default {
         if(ref.data.code===200){
           this.hivesTable=ref.data.page.list
           this.totalCount=ref.data.page.totalCount
+          console.log('this.table',this.hivesTable)
         }
         else{
           this.$message({
             message:ref.data.msg,
-            typr:'erroe'
+            typr:'error'
           })
         }
       })
@@ -252,10 +257,9 @@ export default {
         header:this.$refs.userImageChange.fileList[0].url,
         background:this.$refs.groundImageChange.fileList[0].url
       }
-      this.$http.post('api/user/user/update',profile).then(res=>{
+      this.$http.post('api/user/user/updatePersonal',profile).then(res=>{
         console.log(res)
         if(res.data.code===200){
-
           let user = sessionStorage.getItem("user");
           if (user != null) {
             // 将JSON格式的对象解析为js对象，currentUser为一个js对象
@@ -266,10 +270,8 @@ export default {
             currentUser.birthday=this.birthday
             currentUser.header=this.userImageUrl
             currentUser.background=this.backImageUrl
-
             window.sessionStorage.setItem('user',JSON.stringify(currentUser))
           }
-
           this.$message({
             message: '修改成功',
             type: 'success'
@@ -290,7 +292,7 @@ export default {
       })
     },
     handleSelect(index){
-      this.$router.push(index)
+      router.push(index)
     },
     handlePictureCardPreview (file) {
       this.dialogImageUrl = file
@@ -362,14 +364,19 @@ export default {
     DeleteHives(index){
       // toDo
       //根据前端返回的动态id后端删除该动态
-      console.log(this.hivesTable[index])
+      console.log('--index--',this.hivesTable[index].id)
+      let params=[this.hivesTable[index].id]
+      this.$http.post('/api/exchange/post/delete/',params).then(ref=>{
+        console.log("删除",ref)
+      })
       this.hivesTable.splice(index,1)
+
     },
     EditHives(index){
       this.currentHiveIndex=index
       this.editDialogVisible=true
       this.hiveContentInput=this.hivesTable[index].content
-      let editImageList=this.hivesTable[index].url.map(item=>{
+      let editImageList=this.hivesTable[index].url?.map(item=>{
         return{
           name:item,
           url:item,

@@ -78,28 +78,10 @@ export default {
   mounted() {
     this.user = JSON.parse(window.sessionStorage.getItem('user'))
     // 渲染界面时, 根据用户的 id 获取 websocket 连接
-    this.socket = new WebSocket(`ws://localhost:14000/websocket/${this.user.id}`)
+    this.socket = new WebSocket(`ws://1.117.105.39:14000/websocket/${this.user.id}`)
     this.socket.onmessage = event => {
       this.msgList.push(JSON.parse(event.data))
     }
-    // 为防止网络和其他一些原因，每隔一段时间自动从信箱中获取信息
-    // this.interval = setInterval(() => {
-    //   if (this.contact && this.contact.id) {
-    //     let params={
-    //       "fromId":this.user.id,
-    //       "toId":this.contact.targetId
-    //     }
-    //     this.$http.get('/api/chat/pullMsg', {params}).then(res => {
-    //       console.log("res",res)
-    //       for(let item in res.data){
-    //         this.msgList.push(JSON.parse(res.data[item]))
-    //       }
-    //       console.log(this.msgList)
-    //     }).catch(err => {
-    //       console.log(err)
-    //     })
-    //   }
-    // }, 15000)
   },
   beforeDestroy() {
     // 清楚定时器的设置
@@ -178,6 +160,7 @@ export default {
   width: 100%;
   height: 100%;
   float: right;
+  background-color: white;
 }
 .name {
   position: relative;
@@ -213,7 +196,7 @@ export default {
   height: 432px;
   overflow: auto;
   padding: 10px;
-  margin: 0px 0 11px 0;
+  margin: 0 0 11px 0;
   background-color: #F5F5F5;
 }
 .middle::-webkit-scrollbar {

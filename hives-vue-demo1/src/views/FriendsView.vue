@@ -59,10 +59,9 @@
       width="30%"
       style="background-color: white"
   >
-    <div style="background-color: white">
+    <div style="background-color: white;height: 650px">
       <Dialog :contact="contact" :msgList="msgList"/>
-    </div>>
-
+    </div>
 
   </el-dialog>
 </template>
@@ -70,6 +69,7 @@
 <script>
 import SvgIcon from "../components/svgIcon.vue";
 import Dialog from "../components/Dialog.vue";
+import router  from "@/router";
 
 export default {
   name: "FriendsView",
@@ -111,7 +111,7 @@ export default {
   },
   methods:{
     visitProfileView(item){
-      this.$router.push({path: '/other-profile',query:{ userId:item.targetId}});
+      router.push({path: '/other-profile',query:{ userId:item.targetId}});
     },
     deleteFriend(item,index){
       //TODO

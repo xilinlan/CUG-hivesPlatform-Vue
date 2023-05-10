@@ -11,7 +11,6 @@ import './assets/LoginAndRegister.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'virtual:svg-icons-register';
 import svgIcon from './components/svgIcon.vue';
-import CommentDialog from "./components/CommentDialog.vue";
 import VueClipboard from 'vue-clipboard2'
 
 const app = createApp(App)
@@ -23,7 +22,20 @@ const service = axios.create({
     baseURL: '/api',
     timeout: 5000
 })
-// //
+
+router.beforeEach((to,from,next)=>{
+    if(window.sessionStorage.getItem('user')){
+        next()
+    }else{
+        if(to.path==='/'){
+            next()
+        }
+        else{
+            next('/')
+        }
+    }
+})
+
 app.config.globalProperties.$http=service
 app.use(VueClipboard)
 app.use(createPinia())
