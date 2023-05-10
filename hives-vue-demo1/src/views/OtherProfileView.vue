@@ -41,7 +41,7 @@
                 <el-menu-item index="1" class="menu-item">Hives</el-menu-item>
                 <el-menu-item index="2" class="menu-item">Media</el-menu-item>
                 <el-menu-item index="3" class="menu-item">Replies</el-menu-item>
-                <el-menu-item index="4">Likes</el-menu-item>
+                <el-menu-item index="4" >Likes</el-menu-item>
               </el-menu>
             </el-header>
             <!--        下方内容-->
@@ -137,6 +137,23 @@
                   </div>
                 </div>
               </div>
+<!--              media内容-->
+              <div class="Hives-Box" v-if="activeIndex==='2'">
+                <div>
+                  <el-divider>图片</el-divider>
+                  <div>
+                    <ul class="el-upload-list el-upload-list--picture-card">
+                      <li class="el-upload-list__item is-success" v-for="fit in pictureTable" :key="fit">
+                        <img style="width: 100%; height: 100%" :src="fit" />
+                      </li>
+                    </ul>
+                  </div>
+                  <el-divider>视频</el-divider>
+                  <div>
+                    <video :src=fit class="avatar" controls="controls" style="width: 100%;height: 50%" v-for="fit in videoTable"/>
+                  </div>
+                </div>
+              </div>
             </el-main>
           </el-container>
         </div>
@@ -177,6 +194,8 @@ export default {
         background:'',
         header:'',
       },
+      videoTable:[],
+      pictureTable:[],
       activeIndex:'1',
       hivesList:[],
       currentPage:1,
@@ -217,12 +236,23 @@ export default {
         "limit":this.limit,
         "userId":this.otherUser.id
       }
-
+      let tempPictureTable=[]
+      let tempVideoTable=[]
       this.$http.get('/api/exchange/post/own?',{params}).then(ref=>{
         console.log("profile",ref.data)
         if(ref.data.code===200){
           this.hivesList=ref.data.page.list
           this.totalCount=ref.data.page.totalCount
+          for(let index in this.hivesList){
+            console.log("测试",this.hivesList[index].urls)
+            if(this.hivesList[index].type===0){
+              tempPictureTable=tempPictureTable.concat(this.hivesList[index].urls)
+            }else{
+              tempVideoTable=tempVideoTable.concat(this.hivesList[index].urls)
+            }
+          }
+          this.pictureTable=tempPictureTable
+          this.videoTable=tempVideoTable
         }
         else{
           this.$message({
